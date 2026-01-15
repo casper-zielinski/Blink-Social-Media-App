@@ -19,9 +19,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,18 +42,33 @@ import androidx.compose.ui.unit.sp
 import com.CU.blink.ui.theme.BlinkTheme
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            var page by rememberSaveable { mutableStateOf<PageLocation>(PageLocation.HOME) }
             BlinkTheme {
-                Surface(color = MaterialTheme.colorScheme.background ,modifier = Modifier.fillMaxSize()) {
+                Surface(
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
-                        topBar = { TopAppBar(Modifier.padding(24.dp)) }) { innerPadding ->
-                        PostSender(Modifier
-                            .padding(innerPadding)
-                            .fillMaxWidth())
+                        topBar = { TopAppBarBlink(modifier = Modifier.padding(top = 20.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)) },
+                        bottomBar = {
+                            BottomAppBarBlink(
+                                modifier = Modifier.fillMaxWidth(),
+                                onChange = { page = it },
+                            )
+                        }) { innerPadding ->
+                        PostSender(
+                            Modifier
+                                .padding(innerPadding)
+                                .fillMaxWidth()
+                        )
                     }
                 }
             }
@@ -59,36 +77,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TopAppBar(modifier: Modifier = Modifier) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(
-            stringResource(R.string.app_name),
-            modifier = Modifier.clickable(true, onClick = { print("Hello") }),
-            style = MaterialTheme.typography.titleMedium,
-            fontSize = 24.sp
-        )
-        IconButton(onClick = { print("Account Route") }) {
-            Icon(
-                Icons.Filled.AccountCircle,
-                "Account Icon",
-                Modifier.size(24.dp)
-            )
-        }
-    }
-}
-
-@Composable
 fun PostSender(modifier: Modifier = Modifier) {
     var sendText by remember { mutableStateOf<String>("") }
 
-    Surface(color = MaterialTheme.colorScheme.surfaceVariant,
+    Surface(
+        color = NavigationBarDefaults.containerColor,
         modifier = modifier
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 8.dp)) {
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -97,7 +95,9 @@ fun PostSender(modifier: Modifier = Modifier) {
                 Icon(
                     Icons.Filled.AccountCircle,
                     "Post Sender Account Icon",
-                    modifier = Modifier.height(46.dp).width(46.dp)
+                    modifier = Modifier
+                        .height(46.dp)
+                        .width(46.dp)
                 )
                 TextField(
                     value = sendText,
@@ -106,12 +106,13 @@ fun PostSender(modifier: Modifier = Modifier) {
                     modifier = Modifier
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 12.dp), Arrangement.End) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp), Arrangement.End) {
                 ElevatedButton(onClick = { sendText = "" }) {
                     Icon(Icons.Filled.Send, "Icon to Send")
                 }
             }
         }
     }
-
 }
