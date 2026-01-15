@@ -1,15 +1,40 @@
+# --- Android Studio / IntelliJ IDEA ---
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+# Manchmal sinnvoll, den ganzen .idea Ordner zu ignorieren,
+# aber oft will man Code-Styles teilen.
+# Die oberen Zeilen sind der Mittelweg.
+
+# --- Gradle ---
+.gradle/
+build/
+app/build/
+**/build/
+
+# --- Local Configuration (WICHTIG!) ---
+local.properties
+# Hier stehen SDK-Pfade und oft API-Keys drin.
+# Das darf NIEMALS in ein öffentliches Repo!
+
+# --- Android ---
 .DS_Store
-/build
-/captures
+captures/
 .externalNativeBuild
 .cxx
 local.properties
+
+# --- Keystores (Falls du signierte Apps baust) ---
+*.jks
+*.keystore
+*.key
+
+# --- Google Services (Falls du Firebase nutzt) ---
+# google-services.json sollte normalerweise NICHT ins Repo,
+# außer es ist eine Open Source Demo ohne echte Security-Risiken.
+google-services.json
