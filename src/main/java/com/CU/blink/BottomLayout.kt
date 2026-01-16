@@ -1,7 +1,5 @@
 package com.CU.blink
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -15,17 +13,11 @@ import androidx.compose.ui.Modifier
 
 
 @Composable
-fun BottomAppBarBlink(modifier: Modifier = Modifier, onChange: (value: PageLocation) -> Unit) {
-    var pageLocal by rememberSaveable { mutableStateOf<PageLocation>(PageLocation.HOME) }
+fun BottomAppBarBlink(modifier: Modifier = Modifier, onChange: (value: PageLocation) -> Unit, currentPageLocation: PageLocation) {
     NavigationBar(modifier) {
         PageLocation.entries.forEach { it ->
-            NavigationBarItem(it == pageLocal, onClick = { changePage(onChange, { pageLocal = it }, it ) }, icon = { Icon(
+            NavigationBarItem(it == currentPageLocation, onClick = { onChange(it) }, icon = { Icon(
                 it.icon, it.text) }, label = { Text(it.text) })
         }
     }
-}
-
-fun changePage(changeGlobal: (value: PageLocation) -> Unit, changeLocal: () -> Unit, value: PageLocation) {
-    changeGlobal(value)
-    changeLocal()
 }
