@@ -1,6 +1,7 @@
 package com.CU.blink.HomePage
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
@@ -24,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.CU.blink.Post
+import com.CU.blink.HomePage.Post
 import com.CU.blink.R
 import com.CU.blink.composables.AccountIcon
 
@@ -64,9 +68,11 @@ fun PostSender(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                AccountIcon( modifier = Modifier
-                    .height(46.dp)
-                    .width(46.dp), "Post Sender Account Icon")
+                AccountIcon(
+                    modifier = Modifier
+                        .height(46.dp)
+                        .width(46.dp), "Post Sender Account Icon"
+                )
                 TextField(
                     value = sendText,
                     onValueChange = { sendText = it },
@@ -90,38 +96,77 @@ fun PostSender(modifier: Modifier = Modifier) {
 @Composable
 fun PostFeed(modifier: Modifier = Modifier) {
     val Posts: List<Post> = listOf(
-        Post("Casp", "Casp300", "What's up Cookie"),
-        Post("Demir", "Demir568", "Calm down g"),
-        Post("Endurance", "Endurance@destiny.lol", "Lorem Ipsum trallalelo tra...")
+        Post("Casp", "Casp300", "What's up Cookie", comments = listOf(Comment("Casp", "Casp300", "What are you saying"))),
+        Post("Demir", "Demir568", "Calm down g", comments = listOf(Comment("Casp", "Casp300", "What are you saying"))),
+        Post(
+            "Endurance",
+            "Endurance@destiny.lol",
+            "Lorem Ipsum trallalelo tra...",
+            comments = listOf(
+                Comment("Casp", "Casp300", "What are you saying")
+            )
+        )
     )
 
     LazyColumn(modifier.fillMaxWidth()) {
-        items(Posts) { it ->
-            Spacer(modifier = Modifier.padding(3.dp))
-            Column(
+        itemsIndexed(Posts) { index, it ->
+            Spacer(modifier = Modifier.padding(if (index == 0) 3.dp else 1.5.dp))
+            SinglePost(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavigationBarDefaults.containerColor)
-                    .padding(horizontal = 12.dp, vertical = 20.dp)
-            ) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    AccountIcon(
-                        modifier = Modifier
-                            .height(46.dp)
-                            .width(46.dp), "Account Icon of${it.name}"
-                    )
-                    NameAndUsername(it.name, it.username, Modifier.padding(start = 8.dp))
-                }
-                Text(it.text, style = MaterialTheme.typography.displayLarge, modifier = Modifier.padding(top = 6.dp), fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-            }
+                    .background(NavigationBarDefaults.containerColor), it
+            )
+            Spacer(modifier = Modifier.padding(if (Posts.size - 1 == index) 3.dp else 1.5.dp))
         }
     }
+}
+
+@Composable
+fun SinglePost(modifier: Modifier, Post: Post) {
+    var showComment by rememberSaveable { mutableStateOf(false) }
+    Column(
+        modifier
+            .clickable(onClick = { showComment = !showComment })
+            .padding(horizontal = 12.dp, vertical = 20.dp)
+    ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            AccountIcon(
+                modifier = Modifier
+                    .height(46.dp)
+                    .width(46.dp), "Account Icon of${Post.name}"
+            )
+            NameAndUsername(Post.name, Post.username, Modifier.padding(start = 8.dp))
+        }
+        Text(
+            Post.text,
+            style = MaterialTheme.typography.displayLarge,
+            modifier = Modifier.padding(top = 6.dp),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        if (showComment) {
+            /**
+             * @TODO
+             * fix error in CommentFeed, app crashes when using this Composable
+             *
+             * @sample
+             *
+             */
+            HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.inverseSurface, modifier = Modifier.padding(vertical = 4.dp))
+            CommentFeed(Modifier.padding(8.dp), Post.comments)
+        }
+    }
+
 }
 
 @Composable
 fun NameAndUsername(name: String, username: String, modifier: Modifier = Modifier) {
     Column(modifier) {
         Text(name, style = MaterialTheme.typography.bodyLarge)
-        Text(username, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+        Text(
+            username,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary
+        )
     }
 }
