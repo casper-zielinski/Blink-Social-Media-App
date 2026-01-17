@@ -75,7 +75,6 @@ fun CommentFeed(modifier: Modifier, comments: List<Comment>?) {
                             modifier = Modifier.padding(bottom = 2.dp)
                         )
                     }
-
                 }
             }
         }

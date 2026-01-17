@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlin.collections.emptyMap
 
 class SocialViewModel : ViewModel() {
@@ -46,6 +47,7 @@ class SocialViewModel : ViewModel() {
     fun addPost(content: String) {
         val newPost : Post = Post(content = content,name = "Casper", username = "casper.zielinski")
         postCollection.add(newPost)
+        _posts.value += newPost
     }
 
     fun getCommentCollectionPath(postId: String) : CollectionReference {
@@ -69,6 +71,16 @@ class SocialViewModel : ViewModel() {
     fun addComment(postId: String, content: String) {
         val newComment : Comment = Comment(content = content, username = "casper.zielinski", name = "Casper")
         getCommentCollectionPath(postId).add(newComment)
+
+        _comments.update { currentComment ->
+            val updatedMap = HashMap(currentComment)
+
+            val existingComments = updatedMap[postId] ?: emptyList()
+
+            updatedMap[postId] = existingComments + newComment
+
+            updatedMap
+        }
     }
 
     fun clearError() {

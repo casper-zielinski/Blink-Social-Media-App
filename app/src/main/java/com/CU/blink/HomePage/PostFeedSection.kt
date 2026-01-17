@@ -12,10 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,7 +42,11 @@ import com.CU.blink.R
 import com.CU.blink.composables.AccountIcon
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun homePage(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewModel()) {
@@ -97,6 +102,7 @@ fun PostSender(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
 
 @Composable
 fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
+    val mainListState = rememberLazyListState()
     val posts by viewModel.posts.collectAsState()
     val errorMsg by viewModel.errorMessage.collectAsState()
 
@@ -109,13 +115,13 @@ fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
         }
     }
 
-    LazyColumn(modifier.fillMaxWidth()) {
+    LazyColumn(state = mainListState, modifier = modifier.fillMaxWidth()) {
         itemsIndexed(posts) { index, it ->
             Spacer(modifier = Modifier.padding(if (index == 0) 3.dp else 1.5.dp))
             SinglePost(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavigationBarDefaults.containerColor), it, viewModel
+                    .background(NavigationBarDefaults.containerColor), it, viewModel, mainListState, index
             )
             Spacer(modifier = Modifier.padding(if (posts.size - 1 == index) 3.dp else 1.5.dp))
         }
@@ -123,7 +129,10 @@ fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
 }
 
 @Composable
-fun SinglePost(modifier: Modifier, Post: Post, viewModel: SocialViewModel) {
+fun SinglePost(
+    modifier: Modifier, post: Post, viewModel: SocialViewModel, mainListState: LazyListState,
+    postIndex: Int
+) {
     var showComment by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier
@@ -134,19 +143,19 @@ fun SinglePost(modifier: Modifier, Post: Post, viewModel: SocialViewModel) {
             AccountIcon(
                 modifier = Modifier
                     .height(46.dp)
-                    .width(46.dp), "Account Icon of${Post.name}"
+                    .width(46.dp), "Account Icon of${post.name}"
             )
-            NameAndUsername(Post.name, Post.username, Modifier.padding(start = 8.dp))
+            NameAndUsername(post.name, post.username, Modifier.padding(start = 8.dp))
         }
         Text(
-            Post.content,
+            post.content,
             style = MaterialTheme.typography.displayLarge,
             modifier = Modifier.padding(top = 6.dp),
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold
         )
         if (showComment) {
-            viewModel.loadCommentsForPost(Post.id)
+            viewModel.loadCommentsForPost(post.id)
             val comments by viewModel.comments.collectAsState()
 
             HorizontalDivider(
@@ -155,6 +164,7 @@ fun SinglePost(modifier: Modifier, Post: Post, viewModel: SocialViewModel) {
                 modifier = Modifier.padding(vertical = 12.dp)
             )
             var sendText by remember { mutableStateOf("") }
+            val coroutineScope = rememberCoroutineScope()
 
             Row(
                 Modifier.fillMaxWidth(),
@@ -170,7 +180,14 @@ fun SinglePost(modifier: Modifier, Post: Post, viewModel: SocialViewModel) {
                     value = sendText,
                     onValueChange = { sendText = it },
                     placeholder = { Text(stringResource(R.string.commentplacholder)) },
-                    modifier = Modifier
+                    modifier = Modifier.onFocusEvent { focusState ->
+                        if (focusState.isFocused) {
+                            coroutineScope.launch {
+                                delay(300)
+                                mainListState.animateScrollToItem(postIndex)
+                            }
+                        }
+                    }
                 )
             }
             Row(
@@ -178,7 +195,9 @@ fun SinglePost(modifier: Modifier, Post: Post, viewModel: SocialViewModel) {
                     .fillMaxWidth()
                     .padding(top = 12.dp), Arrangement.End
             ) {
-                ElevatedButton(onClick = { viewModel.addComment(Post.id, sendText); sendText = "" }) {
+                ElevatedButton(onClick = {
+                    viewModel.addComment(post.id, sendText); sendText = ""
+                }) {
                     Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
                 }
             }
@@ -187,7 +206,7 @@ fun SinglePost(modifier: Modifier, Post: Post, viewModel: SocialViewModel) {
                 color = MaterialTheme.colorScheme.inverseSurface,
                 modifier = Modifier.padding(top = 6.dp)
             )
-            CommentFeed(Modifier.padding(8.dp), comments[Post.id])
+            CommentFeed(Modifier.padding(8.dp), comments[post.id])
         }
     }
 
