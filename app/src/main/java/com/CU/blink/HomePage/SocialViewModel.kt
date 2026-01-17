@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlin.collections.emptyMap
 
 class SocialViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
@@ -14,7 +15,7 @@ class SocialViewModel : ViewModel() {
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts = _posts.asStateFlow()
 
-    private val _comments = MutableStateFlow<List<Comment>>(emptyList())
+    private val _comments = MutableStateFlow<HashMap<String, List<Comment>>>(hashMapOf())
     val comments = _comments.asStateFlow()
 
     private val _errorMessage = MutableStateFlow<String?>(null)
@@ -60,7 +61,7 @@ class SocialViewModel : ViewModel() {
                 }
 
                 if (snapshot != null) {
-                    _comments.value = snapshot.toObjects<Comment>()
+                    _comments.value[postId] = snapshot.toObjects<Comment>()
                 }
             }
     }

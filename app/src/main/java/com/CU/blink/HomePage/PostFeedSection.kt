@@ -44,23 +44,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun homePage(modifier: Modifier = Modifier) {
+fun homePage(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewModel()) {
     Column(modifier) {
         PostSender(
-            Modifier
-                .fillMaxWidth()
+            Modifier.fillMaxWidth(), viewModel
         )
-        PostFeed(Modifier.fillMaxWidth())
+        PostFeed(Modifier.fillMaxWidth(), viewModel)
     }
 }
 
 @Composable
-fun PostSender(modifier: Modifier = Modifier) {
-    var sendText by remember { mutableStateOf<String>("") }
+fun PostSender(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
+    var sendText by remember { mutableStateOf("") }
 
     Surface(
-        color = NavigationBarDefaults.containerColor,
-        modifier = modifier
+        color = NavigationBarDefaults.containerColor, modifier = modifier
     ) {
         Column(
             modifier = Modifier
@@ -89,7 +87,7 @@ fun PostSender(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(top = 12.dp), Arrangement.End
             ) {
-                ElevatedButton(onClick = { sendText = "" }) {
+                ElevatedButton(onClick = { viewModel.addPost(sendText); sendText = "" }) {
                     Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
                 }
             }
@@ -98,7 +96,7 @@ fun PostSender(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewModel()) {
+fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
     val posts by viewModel.posts.collectAsState()
     val errorMsg by viewModel.errorMessage.collectAsState()
 
@@ -117,7 +115,7 @@ fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewMod
             SinglePost(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavigationBarDefaults.containerColor), it
+                    .background(NavigationBarDefaults.containerColor), it, viewModel
             )
             Spacer(modifier = Modifier.padding(if (posts.size - 1 == index) 3.dp else 1.5.dp))
         }
@@ -125,7 +123,7 @@ fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewMod
 }
 
 @Composable
-fun SinglePost(modifier: Modifier, Post: Post) {
+fun SinglePost(modifier: Modifier, Post: Post, viewModel: SocialViewModel) {
     var showComment by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier
@@ -148,16 +146,15 @@ fun SinglePost(modifier: Modifier, Post: Post) {
             fontWeight = FontWeight.SemiBold
         )
         if (showComment) {
-            val comments : List<Comment> = listOf(Comment(content = "Hello mama", name = "Casper Zielinski", username = "casper.zielinski"))
-            /**
-             * @TODO
-             * fix error in CommentFeed, app crashes when using this Composable
-             *
-             * @sample
-             *
-             */
-            HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.inverseSurface, modifier = Modifier.padding(vertical = 4.dp))
-            CommentFeed(Modifier.padding(8.dp), comments)
+            viewModel.loadCommentsForPost(Post.id)
+            val comments by viewModel.comments.collectAsState()
+
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.inverseSurface,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+            CommentFeed(Modifier.padding(8.dp), comments[Post.id], postid = Post.id)
         }
     }
 
