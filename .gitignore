@@ -38,3 +38,5 @@ local.properties
 # google-services.json sollte normalerweise NICHT ins Repo,
 # außer es ist eine Open Source Demo ohne echte Security-Risiken.
 google-services.json
+
+/build
