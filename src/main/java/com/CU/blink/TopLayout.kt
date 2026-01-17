@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.CU.blink.composables.AccountIcon
 
 @Composable
-public fun TopAppBarBlink(modifier: Modifier = Modifier, onChange: (value: PageLocation) -> Unit) {
+fun TopAppBarBlink(modifier: Modifier = Modifier, onChange: (value: PageLocation) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,

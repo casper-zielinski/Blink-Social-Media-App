@@ -11,10 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,12 +34,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.CU.blink.HomePage.Post
 import com.CU.blink.R
 import com.CU.blink.composables.AccountIcon
 
 @Composable
-fun homePage(modifier: Modifier = Modifier) {
+fun HomePage(modifier: Modifier = Modifier) {
     Column(modifier) {
         PostSender(
             Modifier
@@ -86,7 +84,7 @@ fun PostSender(modifier: Modifier = Modifier) {
                     .padding(top = 12.dp), Arrangement.End
             ) {
                 ElevatedButton(onClick = { sendText = "" }) {
-                    Icon(Icons.Filled.Send, "Icon to Send")
+                    Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
                 }
             }
         }
