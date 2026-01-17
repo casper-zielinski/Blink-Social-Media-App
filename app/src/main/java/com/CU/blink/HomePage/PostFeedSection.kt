@@ -1,5 +1,6 @@
 package com.CU.blink.HomePage
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,9 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
@@ -24,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,9 +37,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.CU.blink.HomePage.Post
 import com.CU.blink.R
 import com.CU.blink.composables.AccountIcon
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun homePage(modifier: Modifier = Modifier) {
@@ -86,7 +90,7 @@ fun PostSender(modifier: Modifier = Modifier) {
                     .padding(top = 12.dp), Arrangement.End
             ) {
                 ElevatedButton(onClick = { sendText = "" }) {
-                    Icon(Icons.Filled.Send, "Icon to Send")
+                    Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
                 }
             }
         }
@@ -94,29 +98,28 @@ fun PostSender(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PostFeed(modifier: Modifier = Modifier) {
-    val Posts: List<Post> = listOf(
-        Post("Casp", "Casp300", "What's up Cookie", comments = listOf(Comment("Casp", "Casp300", "What are you saying"))),
-        Post("Demir", "Demir568", "Calm down g", comments = listOf(Comment("Casp", "Casp300", "What are you saying"))),
-        Post(
-            "Endurance",
-            "Endurance@destiny.lol",
-            "Lorem Ipsum trallalelo tra...",
-            comments = listOf(
-                Comment("Casp", "Casp300", "What are you saying")
-            )
-        )
-    )
+fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewModel()) {
+    val posts by viewModel.posts.collectAsState()
+    val errorMsg by viewModel.errorMessage.collectAsState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(errorMsg) {
+        if (errorMsg != null) {
+            Toast.makeText(context, "Fehler: $errorMsg", Toast.LENGTH_LONG).show()
+            viewModel.clearError()
+        }
+    }
 
     LazyColumn(modifier.fillMaxWidth()) {
-        itemsIndexed(Posts) { index, it ->
+        itemsIndexed(posts) { index, it ->
             Spacer(modifier = Modifier.padding(if (index == 0) 3.dp else 1.5.dp))
             SinglePost(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(NavigationBarDefaults.containerColor), it
             )
-            Spacer(modifier = Modifier.padding(if (Posts.size - 1 == index) 3.dp else 1.5.dp))
+            Spacer(modifier = Modifier.padding(if (posts.size - 1 == index) 3.dp else 1.5.dp))
         }
     }
 }
@@ -138,13 +141,14 @@ fun SinglePost(modifier: Modifier, Post: Post) {
             NameAndUsername(Post.name, Post.username, Modifier.padding(start = 8.dp))
         }
         Text(
-            Post.text,
+            Post.content,
             style = MaterialTheme.typography.displayLarge,
             modifier = Modifier.padding(top = 6.dp),
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold
         )
         if (showComment) {
+            val comments : List<Comment> = listOf(Comment(content = "Hello mama", name = "Casper Zielinski", username = "casper.zielinski"))
             /**
              * @TODO
              * fix error in CommentFeed, app crashes when using this Composable
@@ -153,7 +157,7 @@ fun SinglePost(modifier: Modifier, Post: Post) {
              *
              */
             HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.inverseSurface, modifier = Modifier.padding(vertical = 4.dp))
-            CommentFeed(Modifier.padding(8.dp), Post.comments)
+            CommentFeed(Modifier.padding(8.dp), comments)
         }
     }
 

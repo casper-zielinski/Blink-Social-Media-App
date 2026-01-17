@@ -37,6 +37,6 @@ captures/
 # --- Google Services (Falls du Firebase nutzt) ---
 # google-services.json sollte normalerweise NICHT ins Repo,
 # außer es ist eine Open Source Demo ohne echte Security-Risiken.
-google-services.json
+app/google-services.json
 
 /build

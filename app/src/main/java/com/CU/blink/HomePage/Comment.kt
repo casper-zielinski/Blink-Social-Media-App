@@ -1,3 +1,10 @@
 package com.CU.blink.HomePage
 
-data class Comment(val name: String, val username: String, val text: String)
+import com.google.firebase.firestore.DocumentId
+
+data class Comment(
+    @DocumentId val id : String = "",
+    val content: String = "",
+    val name: String = "",
+    val username: String = ""
+)

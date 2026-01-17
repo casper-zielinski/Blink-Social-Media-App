@@ -34,7 +34,7 @@ fun CommentFeed(modifier: Modifier, comments: List<Comment>) {
                 )
                 NameAndUsername(it.name, it.username, Modifier.padding(start = 8.dp))
             }
-            Text(it.text, style = MaterialTheme.typography.displayLarge, modifier = Modifier.padding(top = 6.dp), fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(it.content, style = MaterialTheme.typography.displayLarge, modifier = Modifier.padding(top = 6.dp), fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.inverseSurface, modifier = Modifier.padding(vertical = 4.dp))
         }
         }

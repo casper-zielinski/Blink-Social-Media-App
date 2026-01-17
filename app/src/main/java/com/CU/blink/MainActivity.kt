@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var page by rememberSaveable { mutableStateOf<PageLocation>(PageLocation.HOME) }
+            var page by rememberSaveable { mutableStateOf(PageLocation.HOME) }
             BlinkTheme {
                 Surface(
                     color = MaterialTheme.colorScheme.background,
