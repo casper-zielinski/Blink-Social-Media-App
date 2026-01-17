@@ -152,9 +152,42 @@ fun SinglePost(modifier: Modifier, Post: Post, viewModel: SocialViewModel) {
             HorizontalDivider(
                 thickness = 2.dp,
                 color = MaterialTheme.colorScheme.inverseSurface,
-                modifier = Modifier.padding(vertical = 4.dp)
+                modifier = Modifier.padding(vertical = 12.dp)
             )
-            CommentFeed(Modifier.padding(8.dp), comments[Post.id], postid = Post.id)
+            var sendText by remember { mutableStateOf("") }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                AccountIcon(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(40.dp), "Post Sender Account Icon"
+                )
+                TextField(
+                    value = sendText,
+                    onValueChange = { sendText = it },
+                    placeholder = { Text(stringResource(R.string.commentplacholder)) },
+                    modifier = Modifier
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp), Arrangement.End
+            ) {
+                ElevatedButton(onClick = { viewModel.addComment(Post.id, sendText); sendText = "" }) {
+                    Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
+                }
+            }
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.inverseSurface,
+                modifier = Modifier.padding(top = 6.dp)
+            )
+            CommentFeed(Modifier.padding(8.dp), comments[Post.id])
         }
     }
 

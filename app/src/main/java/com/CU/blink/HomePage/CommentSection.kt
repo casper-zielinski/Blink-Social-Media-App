@@ -37,48 +37,21 @@ import com.CU.blink.R
 import com.CU.blink.composables.AccountIcon
 
 @Composable
-fun CommentFeed(modifier: Modifier, comments: List<Comment>?, viewModel: SocialViewModel = viewModel(), postid: String) {
+fun CommentFeed(modifier: Modifier, comments: List<Comment>?) {
     Column(modifier) {
-        var sendText by remember { mutableStateOf("") }
-
-        Row(
-            Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            AccountIcon(
-                modifier = Modifier
-                    .height(40.dp)
-                    .width(40.dp), "Post Sender Account Icon"
-            )
-            TextField(
-                value = sendText,
-                onValueChange = { sendText = it },
-                placeholder = { Text(stringResource(R.string.commentplacholder)) },
-                modifier = Modifier
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp), Arrangement.End
-        ) {
-            ElevatedButton(onClick = { viewModel.addComment(postid, sendText); sendText = "" }) {
-                Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
-            }
-        }
 
         if (comments == null || comments.isEmpty()) {
             Text(
                 "No Comments yet",
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary
             )
         } else {
-            comments.forEach {
+            comments.forEachIndexed { index, it ->
                 Column(
                 ) {
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.fillMaxWidth().padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
                         AccountIcon(
                             modifier = Modifier
                                 .height(40.dp)
@@ -86,18 +59,23 @@ fun CommentFeed(modifier: Modifier, comments: List<Comment>?, viewModel: SocialV
                         )
                         NameAndUsername(it.name, it.username, Modifier.padding(start = 8.dp))
                     }
+
                     Text(
                         it.content,
-                        style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.padding(top = 6.dp),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(vertical = 18.dp),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold
                     )
-                    HorizontalDivider(
-                        thickness = 2.dp,
-                        color = MaterialTheme.colorScheme.inverseSurface,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
+
+                    if (index != comments.size - 1) {
+                        HorizontalDivider(
+                            thickness = 2.dp,
+                            color = MaterialTheme.colorScheme.inverseSurface,
+                            modifier = Modifier.padding(bottom = 2.dp)
+                        )
+                    }
+
                 }
             }
         }
