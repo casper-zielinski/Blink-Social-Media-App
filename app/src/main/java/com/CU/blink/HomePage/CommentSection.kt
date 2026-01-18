@@ -51,7 +51,7 @@ fun CommentFeed(modifier: Modifier, comments: List<Comment>?) {
             comments.forEachIndexed { index, it ->
                 Column(
                 ) {
-                    Row(Modifier.fillMaxWidth().padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                         AccountIcon(
                             modifier = Modifier
                                 .height(40.dp)
@@ -63,7 +63,7 @@ fun CommentFeed(modifier: Modifier, comments: List<Comment>?) {
                     Text(
                         it.content,
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(vertical = 18.dp),
+                        modifier = Modifier.padding(vertical = 20.dp),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold
                     )

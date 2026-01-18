@@ -2,4 +2,9 @@
     <string name="app_name">Blink</string>
     <string name="placeholderwhatshappening">What is happening...</string>
     <string name="commentplacholder">Comment</string>
+    <string name="nameplaceholder">Your Name</string>
+    <string name="emailplaceholder">Your Email</string>
+    <string name="passwordplaceholder">Your Password</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
 </resources>

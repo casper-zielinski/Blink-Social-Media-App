@@ -1,6 +1,9 @@
 package com.CU.blink.HomePage
 
 import androidx.lifecycle.ViewModel
+import com.CU.blink.Auth.User
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -24,6 +27,8 @@ class SocialViewModel : ViewModel() {
 
     val postCollection = db.collection("Posts")
 
+    val user = Firebase.auth.currentUser
+
     init {
         loadPosts()
     }
@@ -45,9 +50,13 @@ class SocialViewModel : ViewModel() {
     }
 
     fun addPost(content: String) {
-        val newPost : Post = Post(content = content,name = "Casper", username = "casper.zielinski")
-        postCollection.add(newPost)
-        _posts.value += newPost
+        val currentUser : User = User(user?.displayName, user?.email?.split(".")[0], user?.email)
+
+        if (user != null && !currentUser.name.isNullOrEmpty() && !currentUser.username.isNullOrEmpty() ) {
+            val newPost : Post = Post(content = content,name = currentUser.name, username = currentUser.username)
+            postCollection.add(newPost)
+            _posts.value += newPost
+        }
     }
 
     fun getCommentCollectionPath(postId: String) : CollectionReference {
