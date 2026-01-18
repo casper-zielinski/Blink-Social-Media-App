@@ -1,6 +1,7 @@
 package com.CU.blink.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -14,7 +15,7 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    )
+    ),
     /* Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -31,4 +32,23 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     )
     */
+    // 2. name / headline in sections
+    headlineMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 30.sp,
+        lineHeight = 36.sp,
+        letterSpacing = 0.sp,
+        color = Color.Black
+    ),
+
+    // 3. subName or more detailed infos
+    labelLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 15.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.1.sp
+    )
+
 )

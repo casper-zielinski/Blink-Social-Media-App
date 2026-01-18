@@ -65,9 +65,8 @@ fun HeaderSection(
             name = "Cas",
             username = "@cas",
             Modifier.align(Alignment.BottomStart),
-            nameStyle = MaterialTheme.typography.headlineLarge.copy(color = Color.Black, fontSize = 30.sp),
-            usernameStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.LightGray, fontSize = 15.sp),
-
+            nameStyle = MaterialTheme.typography.headlineMedium,
+            usernameStyle = MaterialTheme.typography.labelLarge,
         )
     }
 }
