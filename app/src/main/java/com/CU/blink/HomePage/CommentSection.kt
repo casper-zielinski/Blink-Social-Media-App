@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.CU.blink.R
 import com.CU.blink.composables.AccountIcon
+import com.CU.blink.composables.NameAndUsername
 
 @Composable
 fun CommentFeed(modifier: Modifier, comments: List<Comment>?) {

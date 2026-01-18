@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
         // dummy data
         val user = User(
             name = "Cas",
-            username = "Cas",
+            username = "Cas3333",
             bio = "I love react",
             maxTimeUse = 1,
             userImageUrl = "",
@@ -37,12 +37,13 @@ import androidx.compose.ui.unit.dp
             HeaderSection(
                 headerImageUrl = user.headerImageUrl,
                 userImageUrl = user.userImageUrl,
+                name = user.name,
+                username =  user.username,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White)
                     .padding(bottom = 16.dp)
             )
-            NameSection(user.name, user.username)
             BioSection(user.bio)
             MaxTimeUseSection(user.maxTimeUse)
             StatsSection(user.likesCount, user.followersCount, user.followingCount)
