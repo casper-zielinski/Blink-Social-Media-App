@@ -50,16 +50,17 @@ class SocialViewModel : ViewModel() {
     }
 
     fun addPost(content: String) {
-        val currentUser : User = User(user?.displayName, user?.email?.split(".")[0], user?.email)
+        val currentUser: User = User(user?.displayName, user?.email?.split(".")[0], user?.email)
 
-        if (user != null && !currentUser.name.isNullOrEmpty() && !currentUser.username.isNullOrEmpty() ) {
-            val newPost : Post = Post(content = content,name = currentUser.name, username = currentUser.username)
+        if (user != null && !currentUser.name.isNullOrEmpty() && !currentUser.username.isNullOrEmpty()) {
+            val newPost: Post =
+                Post(content = content, name = currentUser.name, username = currentUser.username)
             postCollection.add(newPost)
             _posts.value += newPost
         }
     }
 
-    fun getCommentCollectionPath(postId: String) : CollectionReference {
+    fun getCommentCollectionPath(postId: String): CollectionReference {
         return db.collection("Posts/$postId/Comments")
     }
 
@@ -78,17 +79,21 @@ class SocialViewModel : ViewModel() {
     }
 
     fun addComment(postId: String, content: String) {
-        val newComment : Comment = Comment(content = content, username = "casper.zielinski", name = "Casper")
-        getCommentCollectionPath(postId).add(newComment)
+        val currentUser: User = User(user?.displayName, user?.email?.split(".")[0], user?.email)
 
-        _comments.update { currentComment ->
-            val updatedMap = HashMap(currentComment)
+        if (user != null && !currentUser.name.isNullOrEmpty() && !currentUser.username.isNullOrEmpty()) {
+            val newComment: Comment = Comment(content = content, username = currentUser.username, name = currentUser.name)
+            getCommentCollectionPath(postId).add(newComment)
 
-            val existingComments = updatedMap[postId] ?: emptyList()
+            _comments.update { currentComment ->
+                val updatedMap = HashMap(currentComment)
 
-            updatedMap[postId] = existingComments + newComment
+                val existingComments = updatedMap[postId] ?: emptyList()
 
-            updatedMap
+                updatedMap[postId] = existingComments + newComment
+
+                updatedMap
+            }
         }
     }
 

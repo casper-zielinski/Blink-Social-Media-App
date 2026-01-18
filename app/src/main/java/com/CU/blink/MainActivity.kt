@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            LoginOrRegister(modifier = Modifier.padding(46.dp).fillMaxWidth().fillMaxHeight(0.6f), onSuccessfullLogin = { loggedIn = true })
+                            LoginOrRegister(modifier = Modifier.padding(46.dp).fillMaxWidth().fillMaxHeight(0.6f), onSuccessfulLogin = { loggedIn = true })
                         }
                     }
                 }
