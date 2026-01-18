@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.CU.blink.Account.AccountPage
 import com.CU.blink.HomePage.homePage
 import com.CU.blink.ui.theme.BlinkTheme
 
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
                         when (page) {
                             PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
                             PageLocation.SEARCH -> Text("Search")
-                            PageLocation.ACCOUNT -> Text("Account")
+                            PageLocation.ACCOUNT ->  AccountPage(Modifier.padding(innerPadding))
                         }
                     }
                 }
