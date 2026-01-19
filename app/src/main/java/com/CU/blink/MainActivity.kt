@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                             when (page) {
                                 PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
                                 PageLocation.SEARCH -> Text("Search")
-                                PageLocation.ACCOUNT -> AccountPage(Modifier.padding(innerPadding)) //, onSuccessfullyLogout = { loggedIn = false }
+                                PageLocation.ACCOUNT -> AccountPage(Modifier.padding(innerPadding), onSuccessfullyLogout = { loggedIn = false })
                             }
                         }
                     } else {
