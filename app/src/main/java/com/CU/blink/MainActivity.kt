@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.CU.blink.Auth.LoginOrRegister
-import com.CU.blink.Auth.accountPage
 import com.CU.blink.Account.AccountPage
 import com.CU.blink.HomePage.homePage
 import com.CU.blink.ui.theme.BlinkTheme
@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         auth = Firebase.auth
         val currentUser = auth.currentUser
+        val themeViewModel by viewModels<ThemeViewModel>()
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,10 +46,11 @@ class MainActivity : ComponentActivity() {
             var page by rememberSaveable { mutableStateOf(PageLocation.HOME) }
             var loggedIn by rememberSaveable { mutableStateOf(currentUser != null) }
 
-            BlinkTheme {
+            BlinkTheme (darkTheme = themeViewModel.isDarkMode) {
                 Surface(
                     color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+
                 ) {
                     if (loggedIn) {
                         Scaffold(
@@ -75,7 +77,8 @@ class MainActivity : ComponentActivity() {
                             when (page) {
                                 PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
                                 PageLocation.SEARCH -> Text("Search")
-                                PageLocation.ACCOUNT -> AccountPage(Modifier.padding(innerPadding), onSuccessfullyLogout = { loggedIn = false })
+                                PageLocation.ACCOUNT -> AccountPage(Modifier.padding(innerPadding), onSuccessfullyLogout = { loggedIn = false },
+                                    themeViewModel)
                             }
                         }
                     } else {
