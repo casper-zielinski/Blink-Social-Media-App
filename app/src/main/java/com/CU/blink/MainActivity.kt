@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.CU.blink.Account.AccountPage
 import com.CU.blink.HomePage.homePage
+import com.CU.blink.Search.SearchPage
 import com.CU.blink.ui.theme.BlinkTheme
 
 class MainActivity : ComponentActivity() {
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
                         }) { innerPadding ->
                         when (page) {
                             PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
-                            PageLocation.SEARCH -> Text("Search")
+                            PageLocation.SEARCH -> SearchPage(Modifier.padding(innerPadding))
                             PageLocation.ACCOUNT ->  AccountPage(Modifier.padding(innerPadding))
                         }
                     }
