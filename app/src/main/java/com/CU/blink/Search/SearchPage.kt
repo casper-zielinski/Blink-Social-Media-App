@@ -83,12 +83,13 @@ fun SearchPage(modifier: Modifier = Modifier) {
         )
 
         LazyColumn(modifier = Modifier
-            .fillMaxSize(),verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            .fillMaxSize()) {
             items(filteredUsers) {user ->
                 Row(modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
+                    .clickable{}
                     .padding(top = 12.dp, bottom = 12.dp, start = 16.dp, end = 16.dp)
-                    .clickable{}) {
+                    ) {
                     Box(
                         modifier = Modifier
                             .size(60.dp),
