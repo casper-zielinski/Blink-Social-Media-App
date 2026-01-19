@@ -24,6 +24,8 @@ fun MaxTimeUseSection(maxTimeUse: Int, modifier: Modifier = Modifier,
     Column (modifier) {
         Text(text = "Max Zeit", style = maxTimeUseStyle)
 
+        print("Generating row");
+
         Row(modifier = Modifier.fillMaxWidth()) {
             TextField(
                 value = amount,
