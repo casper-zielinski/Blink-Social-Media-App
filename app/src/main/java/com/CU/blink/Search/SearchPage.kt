@@ -61,20 +61,18 @@ fun SearchPage(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .padding(8.dp),
 
-
             singleLine = true,
 
-
+            // Search Icon instead of Enter icon on keyboard
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Search
             ),
-
-
+            // Icon in the Textfield
             leadingIcon = {
                 Icon(Icons.Default.Search, contentDescription = null)
             },
 
-
+            // X icon to delete the text
             trailingIcon = {
                 if (text.isNotEmpty()) {
                     IconButton(onClick = { text = "" }) {
