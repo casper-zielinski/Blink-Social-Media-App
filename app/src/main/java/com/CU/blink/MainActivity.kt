@@ -26,12 +26,13 @@ import androidx.compose.ui.unit.dp
 import com.CU.blink.Auth.LoginOrRegister
 import com.CU.blink.Account.AccountPage
 import com.CU.blink.HomePage.homePage
+import com.CU.blink.Search.SearchPage
 import com.CU.blink.ui.theme.BlinkTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
-private lateinit var auth:  FirebaseAuth
+private lateinit var auth: FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -46,46 +47,50 @@ class MainActivity : ComponentActivity() {
             var page by rememberSaveable { mutableStateOf(PageLocation.HOME) }
             var loggedIn by rememberSaveable { mutableStateOf(currentUser != null) }
 
-            BlinkTheme (darkTheme = themeViewModel.isDarkMode) {
+            BlinkTheme(darkTheme = themeViewModel.isDarkMode) {
                 Surface(
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxSize(),
 
-                ) {
+                    ) {
                     if (loggedIn) {
-                        Scaffold(
-                            modifier = Modifier.fillMaxSize(),
-                            topBar = {
-                                TopAppBarBlink(
-                                    modifier = Modifier.padding(
-                                        top = 20.dp,
-                                        bottom = 8.dp,
-                                        start = 8.dp,
-                                        end = 8.dp
-                                    ),
-                                    onChange = { page = it }
-                                )
-                            },
-                            bottomBar = {
-                                BottomAppBarBlink(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    onChange = { page = it },
-                                    page
-                                )
-                            }
-                        ) { innerPadding ->
+                        Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
+                            TopAppBarBlink(
+                                modifier = Modifier.padding(
+                                    top = 20.dp, bottom = 8.dp, start = 8.dp, end = 8.dp
+                                ), onChange = { page = it })
+                        }, bottomBar = {
+                            BottomAppBarBlink(
+                                modifier = Modifier.fillMaxWidth(),
+                                onChange = { page = it },
+                                page
+                            )
+                        }) { innerPadding ->
                             when (page) {
+                                PageLocation.SEARCH -> SearchPage(Modifier.padding(innerPadding))
                                 PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
-                                PageLocation.SEARCH -> Text("Search")
-                                PageLocation.ACCOUNT -> AccountPage(Modifier.padding(innerPadding), onSuccessfullyLogout = { loggedIn = false },
-                                    themeViewModel)
+                                PageLocation.ACCOUNT -> AccountPage(
+
+                                    Modifier.padding(innerPadding),
+
+                                    onSuccessfullyLogout = { loggedIn = false },
+
+                                    themeViewModel
+
+                                )
                             }
                         }
                     } else {
-                        Column( Modifier.fillMaxSize(),
+                        Column(
+                            Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center) {
-                            LoginOrRegister(modifier = Modifier.padding(46.dp).fillMaxWidth().fillMaxHeight(0.6f), onSuccessfulLogin = { loggedIn = true })
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            LoginOrRegister(
+                                modifier = Modifier
+                                    .padding(46.dp)
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.6f), onSuccessfulLogin = { loggedIn = true })
                         }
                     }
                 }
