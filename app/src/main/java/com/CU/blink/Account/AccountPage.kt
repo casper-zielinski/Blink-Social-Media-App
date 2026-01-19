@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -20,8 +21,13 @@ import androidx.compose.ui.unit.sp
 @Composable
     fun AccountPage(modifier: Modifier = Modifier) {
 
+        var user by remember { mutableStateOf<User?>(null) }
+
+        var isLoading by remember {mutableStateOf(true)}
+
         // dummy data
-        val user = User(
+    /*
+    *  val user = User(
             name = "Cas",
             username = "Cas3333",
             bio = "I love react",
@@ -31,7 +37,18 @@ import androidx.compose.ui.unit.sp
             likesCount = 1100,
             followersCount = 2,
             followingCount = 33
-        );
+        );*/
+    LaunchedEffect(Unit) {
+        UserRepository.getCurrentUser { loadedUser ->
+            user = loadedUser
+            isLoading = false
+        }}
+
+    if (isLoading) {
+        LoadingScreen()
+    } else {
+
+        val activeUser = user ?: User()
 
         Column(
             modifier = modifier
@@ -40,35 +57,38 @@ import androidx.compose.ui.unit.sp
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             HeaderSection(
-                headerImageUrl = user.headerImageUrl,
-                userImageUrl = user.userImageUrl,
-                name = user.name,
-                username =  user.username,
+                headerImageUrl = activeUser.headerImageUrl,
+                userImageUrl = activeUser.userImageUrl,
+                name = activeUser.name,
+                username =  activeUser.username,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(NavigationBarDefaults.containerColor)
                     .padding(16.dp)
             )
-            BioSection(user.bio,
+            BioSection(activeUser.bio,
                 Modifier
                     .fillMaxWidth()
                     .background(NavigationBarDefaults.containerColor)
                     .padding(16.dp),
                 bioStyle = MaterialTheme.typography.headlineMedium)
 
-            MaxTimeUseSection(user.maxTimeUse, modifier = Modifier
+            MaxTimeUseSection(activeUser.maxTimeUse, modifier = Modifier
                 .fillMaxWidth()
                 .background(NavigationBarDefaults.containerColor)
                 .padding(16.dp),
                 maxTimeUseStyle =  MaterialTheme.typography.headlineMedium)
 
-            StatsSection(user.likesCount, user.followersCount, user.followingCount,
+            StatsSection(activeUser.likesCount, activeUser.followersCount, activeUser.followingCount,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(NavigationBarDefaults.containerColor)
                     .padding(16.dp),
                 statsStyle =  MaterialTheme.typography.headlineMedium)
         }
+    }
+
+
 
 
     }
