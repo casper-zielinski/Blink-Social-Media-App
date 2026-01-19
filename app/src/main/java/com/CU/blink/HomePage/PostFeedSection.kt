@@ -45,6 +45,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalContext
+import com.CU.blink.composables.NameAndUsername
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -212,14 +213,3 @@ fun SinglePost(
 
 }
 
-@Composable
-fun NameAndUsername(name: String, username: String, modifier: Modifier = Modifier) {
-    Column(modifier) {
-        Text(name, style = MaterialTheme.typography.bodyLarge)
-        Text(
-            username,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.secondary
-        )
-    }
-}

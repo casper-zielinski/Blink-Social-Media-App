@@ -24,13 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.CU.blink.Auth.LoginOrRegister
 import com.CU.blink.Auth.accountPage
+import com.CU.blink.Account.AccountPage
 import com.CU.blink.HomePage.homePage
 import com.CU.blink.ui.theme.BlinkTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
-private lateinit var auth: FirebaseAuth
+private lateinit var auth:  FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +43,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             var page by rememberSaveable { mutableStateOf(PageLocation.HOME) }
-            var loggedIn by rememberSaveable {  mutableStateOf(currentUser != null) }
+            var loggedIn by rememberSaveable { mutableStateOf(currentUser != null) }
+
             BlinkTheme {
                 Surface(
                     color = MaterialTheme.colorScheme.background,
@@ -68,19 +70,18 @@ class MainActivity : ComponentActivity() {
                                     onChange = { page = it },
                                     page
                                 )
-                            }) { innerPadding ->
+                            }
+                        ) { innerPadding ->
                             when (page) {
                                 PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
-                                PageLocation.SEARCH -> Text("SEARCH")
-                                PageLocation.ACCOUNT -> accountPage(Modifier.padding(innerPadding), onSuccessfullyLogout = { loggedIn = false })
+                                PageLocation.SEARCH -> Text("Search")
+                                PageLocation.ACCOUNT -> AccountPage(Modifier.padding(innerPadding)) //, onSuccessfullyLogout = { loggedIn = false }
                             }
                         }
                     } else {
-                        Column(
-                            Modifier.fillMaxSize(),
+                        Column( Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
+                            verticalArrangement = Arrangement.Center) {
                             LoginOrRegister(modifier = Modifier.padding(46.dp).fillMaxWidth().fillMaxHeight(0.6f), onSuccessfulLogin = { loggedIn = true })
                         }
                     }
@@ -89,5 +90,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 
