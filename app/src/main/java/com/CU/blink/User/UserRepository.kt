@@ -1,15 +1,14 @@
-package com.CU.blink.Account
+package com.CU.blink.User
 
 // In UserRepository.kt
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.CU.blink.Account.User
 
 object UserRepository {
     private val db get() = FirebaseFirestore.getInstance()
     private val auth get() = FirebaseAuth.getInstance()
 
-    // 1. Uploud data
+    // 1. Uploud user
     fun saveUser(user: User, onComplete: (Boolean) -> Unit) {
         val uid = auth.currentUser?.uid
         if (uid != null) {
@@ -20,7 +19,7 @@ object UserRepository {
         }
     }
 
-    // 2. Load Data
+    // 2. Load user
     fun getCurrentUser(onResult: (User?) -> Unit) {
         val uid = auth.currentUser?.uid
         if (uid != null) {

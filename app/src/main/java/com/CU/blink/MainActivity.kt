@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,6 +28,7 @@ import com.CU.blink.Auth.LoginOrRegister
 import com.CU.blink.Account.AccountPage
 import com.CU.blink.HomePage.homePage
 import com.CU.blink.Search.SearchPage
+import com.CU.blink.User.UserViewModel
 import com.CU.blink.ui.theme.BlinkTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -40,6 +42,7 @@ class MainActivity : ComponentActivity() {
         auth = Firebase.auth
         val currentUser = auth.currentUser
         val themeViewModel by viewModels<ThemeViewModel>()
+        val userViewModel by viewModels<UserViewModel>()
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -70,13 +73,12 @@ class MainActivity : ComponentActivity() {
                                 PageLocation.SEARCH -> SearchPage(Modifier.padding(innerPadding))
                                 PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
                                 PageLocation.ACCOUNT -> AccountPage(
-
-                                    Modifier.padding(innerPadding),
-
-                                    onSuccessfullyLogout = { loggedIn = false },
-
-                                    themeViewModel
-
+                                    modifier = Modifier.padding(innerPadding),
+                                    onSuccessfullyLogout = {
+                                        userViewModel.logOut { loggedIn = false }
+                                    },
+                                    viewModel = themeViewModel,
+                                    userViewModel = userViewModel
                                 )
                             }
                         }
@@ -93,6 +95,12 @@ class MainActivity : ComponentActivity() {
                                     .fillMaxHeight(0.6f), onSuccessfulLogin = { loggedIn = true })
                         }
                     }
+                }
+            }
+
+            LaunchedEffect(loggedIn) {
+                if (loggedIn) {
+                    userViewModel.loadUserData()
                 }
             }
         }
