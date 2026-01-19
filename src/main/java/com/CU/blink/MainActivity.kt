@@ -31,7 +31,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
-private lateinit var auth: FirebaseAuth
+private lateinit var auth:  FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var page by rememberSaveable { mutableStateOf(PageLocation.HOME) }
             var loggedIn by rememberSaveable { mutableStateOf(currentUser != null) }
+
             BlinkTheme {
                 Surface(
                     color = MaterialTheme.colorScheme.background,
@@ -69,56 +70,19 @@ class MainActivity : ComponentActivity() {
                                     onChange = { page = it },
                                     page
                                 )
-                            }) { innerPadding ->
+                            }
+                        ) { innerPadding ->
                             when (page) {
                                 PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
-                                PageLocation.SEARCH -> Text("SEARCH")
-                                PageLocation.ACCOUNT -> accountPage(
-                                    Modifier.padding(innerPadding),
-                                    onSuccessfullyLogout = { loggedIn = false })
+                                PageLocation.SEARCH -> Text("Search")
+                                PageLocation.ACCOUNT -> AccountPage(Modifier.padding(innerPadding)) //, onSuccessfullyLogout = { loggedIn = false }
                             }
                         }
                     } else {
-                        Column(
-                            Modifier.fillMaxSize(),
+                        Column( Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            LoginOrRegister(
-                                modifier = Modifier
-                                    .padding(46.dp)
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(0.6f), onSuccessfulLogin = { loggedIn = true })
-                            Scaffold(
-                                modifier = Modifier.fillMaxSize(),
-                                topBar = {
-                                    TopAppBarBlink(
-                                        modifier = Modifier.padding(
-                                            top = 20.dp,
-                                            bottom = 8.dp,
-                                            start = 8.dp,
-                                            end = 8.dp
-                                        ),
-                                        onChange = { page = it }
-                                    )
-                                },
-                                bottomBar = {
-                                    BottomAppBarBlink(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        onChange = { page = it },
-                                        page
-                                    )
-                                }) { innerPadding ->
-                                when (page) {
-                                    PageLocation.HOME -> homePage(Modifier.padding(innerPadding))
-                                    PageLocation.SEARCH -> Text("Search")
-                                    PageLocation.ACCOUNT -> AccountPage(
-                                        Modifier.padding(
-                                            innerPadding
-                                        )
-                                    )
-                                }
-                            }
+                            verticalArrangement = Arrangement.Center) {
+                            LoginOrRegister(modifier = Modifier.padding(46.dp).fillMaxWidth().fillMaxHeight(0.6f), onSuccessfulLogin = { loggedIn = true })
                         }
                     }
                 }
@@ -126,5 +90,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 

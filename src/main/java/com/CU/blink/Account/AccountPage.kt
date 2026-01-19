@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.sp
 @Composable
     fun AccountPage(modifier: Modifier = Modifier) {
 
-        // dummy data
         val user = User(
             name = "Cas",
             username = "Cas3333",
