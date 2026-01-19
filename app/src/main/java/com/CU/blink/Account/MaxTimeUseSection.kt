@@ -38,6 +38,8 @@ fun MaxTimeUseSection(maxTimeUse: Int, modifier: Modifier = Modifier,
                 label = { Text("Dauer") }
             )
 
+            print("Row wurde gerenedrt")
+
             VerticalDivider()
 
             TextField(
