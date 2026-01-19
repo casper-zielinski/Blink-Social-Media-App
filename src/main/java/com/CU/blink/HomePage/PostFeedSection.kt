@@ -1,5 +1,6 @@
 package com.CU.blink.HomePage
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,10 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,28 +38,33 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.CU.blink.HomePage.Post
 import com.CU.blink.R
 import com.CU.blink.composables.AccountIcon
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.platform.LocalContext
+import com.CU.blink.composables.NameAndUsername
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun homePage(modifier: Modifier = Modifier) {
+fun homePage(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewModel()) {
     Column(modifier) {
         PostSender(
-            Modifier
-                .fillMaxWidth()
+            Modifier.fillMaxWidth(), viewModel
         )
-        PostFeed(Modifier.fillMaxWidth())
+        PostFeed(Modifier.fillMaxWidth(), viewModel)
     }
 }
 
 @Composable
-fun PostSender(modifier: Modifier = Modifier) {
-    var sendText by remember { mutableStateOf<String>("") }
+fun PostSender(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
+    var sendText by remember { mutableStateOf("") }
 
     Surface(
-        color = NavigationBarDefaults.containerColor,
-        modifier = modifier
+        color = NavigationBarDefaults.containerColor, modifier = modifier
     ) {
         Column(
             modifier = Modifier
@@ -85,8 +93,8 @@ fun PostSender(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(top = 12.dp), Arrangement.End
             ) {
-                ElevatedButton(onClick = { sendText = "" }) {
-                    Icon(Icons.Filled.Send, "Icon to Send")
+                ElevatedButton(onClick = { viewModel.addPost(sendText); sendText = "" }) {
+                    Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
                 }
             }
         }
@@ -94,35 +102,38 @@ fun PostSender(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PostFeed(modifier: Modifier = Modifier) {
-    val Posts: List<Post> = listOf(
-        Post("Casp", "Casp300", "What's up Cookie", comments = listOf(Comment("Casp", "Casp300", "What are you saying"))),
-        Post("Demir", "Demir568", "Calm down g", comments = listOf(Comment("Casp", "Casp300", "What are you saying"))),
-        Post(
-            "Endurance",
-            "Endurance@destiny.lol",
-            "Lorem Ipsum trallalelo tra...",
-            comments = listOf(
-                Comment("Casp", "Casp300", "What are you saying")
-            )
-        )
-    )
+fun PostFeed(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
+    val mainListState = rememberLazyListState()
+    val posts by viewModel.posts.collectAsState()
+    val errorMsg by viewModel.errorMessage.collectAsState()
 
-    LazyColumn(modifier.fillMaxWidth()) {
-        itemsIndexed(Posts) { index, it ->
+    val context = LocalContext.current
+
+    LaunchedEffect(errorMsg) {
+        if (errorMsg != null) {
+            Toast.makeText(context, "Fehler: $errorMsg", Toast.LENGTH_LONG).show()
+            viewModel.clearError()
+        }
+    }
+
+    LazyColumn(state = mainListState, modifier = modifier.fillMaxWidth()) {
+        itemsIndexed(posts) { index, it ->
             Spacer(modifier = Modifier.padding(if (index == 0) 3.dp else 1.5.dp))
             SinglePost(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(NavigationBarDefaults.containerColor), it
+                    .background(NavigationBarDefaults.containerColor), it, viewModel, mainListState, index
             )
-            Spacer(modifier = Modifier.padding(if (Posts.size - 1 == index) 3.dp else 1.5.dp))
+            Spacer(modifier = Modifier.padding(if (posts.size - 1 == index) 3.dp else 1.5.dp))
         }
     }
 }
 
 @Composable
-fun SinglePost(modifier: Modifier, Post: Post) {
+fun SinglePost(
+    modifier: Modifier, post: Post, viewModel: SocialViewModel, mainListState: LazyListState,
+    postIndex: Int
+) {
     var showComment by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier
@@ -133,40 +144,72 @@ fun SinglePost(modifier: Modifier, Post: Post) {
             AccountIcon(
                 modifier = Modifier
                     .height(46.dp)
-                    .width(46.dp), "Account Icon of${Post.name}"
+                    .width(46.dp), "Account Icon of${post.name}"
             )
-            NameAndUsername(Post.name, Post.username, Modifier.padding(start = 8.dp))
+            NameAndUsername(post.name, post.username, Modifier.padding(start = 8.dp))
         }
         Text(
-            Post.text,
+            post.content,
             style = MaterialTheme.typography.displayLarge,
             modifier = Modifier.padding(top = 6.dp),
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold
         )
         if (showComment) {
-            /**
-             * @TODO
-             * fix error in CommentFeed, app crashes when using this Composable
-             *
-             * @sample
-             *
-             */
-            HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.inverseSurface, modifier = Modifier.padding(vertical = 4.dp))
-            CommentFeed(Modifier.padding(8.dp), Post.comments)
+            viewModel.loadCommentsForPost(post.id)
+            val comments by viewModel.comments.collectAsState()
+
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.inverseSurface,
+                modifier = Modifier.padding(vertical = 12.dp)
+            )
+            var sendText by remember { mutableStateOf("") }
+            val coroutineScope = rememberCoroutineScope()
+
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                AccountIcon(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(40.dp), "Post Sender Account Icon"
+                )
+                TextField(
+                    value = sendText,
+                    onValueChange = { sendText = it },
+                    placeholder = { Text(stringResource(R.string.commentplacholder)) },
+                    modifier = Modifier.onFocusEvent { focusState ->
+                        if (focusState.isFocused) {
+                            coroutineScope.launch {
+                                delay(300)
+                                mainListState.animateScrollToItem(postIndex)
+                            }
+                        }
+                    }
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp), Arrangement.End
+            ) {
+                ElevatedButton(onClick = {
+                    viewModel.addComment(post.id, sendText); sendText = ""
+                }) {
+                    Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
+                }
+            }
+            HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.inverseSurface,
+                modifier = Modifier.padding(top = 6.dp)
+            )
+            CommentFeed(Modifier.padding(8.dp), comments[post.id])
         }
     }
 
 }
 
-@Composable
-fun NameAndUsername(name: String, username: String, modifier: Modifier = Modifier) {
-    Column(modifier) {
-        Text(name, style = MaterialTheme.typography.bodyLarge)
-        Text(
-            username,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.secondary
-        )
-    }
-}
