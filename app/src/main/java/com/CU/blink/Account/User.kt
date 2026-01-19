@@ -6,7 +6,7 @@ data class User(
     val bio: String,
     val userImageUrl: String,
     val headerImageUrl: String,
-    val maxTimeUse: Int,
+    val maxTimeUse: Long,
     val likesCount: Int,
     val followersCount: Int,
     val followingCount: Int

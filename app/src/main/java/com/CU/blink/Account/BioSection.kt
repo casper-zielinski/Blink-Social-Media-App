@@ -27,7 +27,8 @@ fun BioSection(bio: String, modifier: Modifier = Modifier,
             onValueChange = { newText ->
                 text = newText
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .padding(16.dp),
         )
 
     }

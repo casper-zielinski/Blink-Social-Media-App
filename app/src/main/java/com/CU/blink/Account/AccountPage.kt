@@ -1,6 +1,7 @@
 package com.CU.blink.Account
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +25,7 @@ import androidx.compose.ui.unit.sp
             name = "Cas",
             username = "Cas3333",
             bio = "I love react",
-            maxTimeUse = 1,
+            maxTimeUse = 14444,
             userImageUrl = "",
             headerImageUrl = "",
             likesCount = 1100,
@@ -34,7 +36,8 @@ import androidx.compose.ui.unit.sp
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             HeaderSection(
                 headerImageUrl = user.headerImageUrl,
@@ -43,22 +46,28 @@ import androidx.compose.ui.unit.sp
                 username =  user.username,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.LightGray)
+                    .background(NavigationBarDefaults.containerColor)
                     .padding(16.dp)
             )
             BioSection(user.bio,
                 Modifier
                     .fillMaxWidth()
-                    .background(Color.LightGray)
+                    .background(NavigationBarDefaults.containerColor)
                     .padding(16.dp),
                 bioStyle = MaterialTheme.typography.headlineMedium)
 
             MaxTimeUseSection(user.maxTimeUse, modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.LightGray)
+                .background(NavigationBarDefaults.containerColor)
                 .padding(16.dp),
                 maxTimeUseStyle =  MaterialTheme.typography.headlineMedium)
-            StatsSection(user.likesCount, user.followersCount, user.followingCount)
+
+            StatsSection(user.likesCount, user.followersCount, user.followingCount,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(NavigationBarDefaults.containerColor)
+                    .padding(16.dp),
+                statsStyle =  MaterialTheme.typography.headlineMedium)
         }
 
 
