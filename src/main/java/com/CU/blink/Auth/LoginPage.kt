@@ -27,7 +27,12 @@ import com.CU.blink.R
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun LoginPage(modifier: Modifier = Modifier, auth: FirebaseAuth, onSuccessfullyLogin: () -> Unit, onChangePage:  () -> Unit) {
+fun LoginPage(
+    modifier: Modifier = Modifier,
+    auth: FirebaseAuth,
+    onSuccessfullyLogin: () -> Unit,
+    onChangePage: () -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val baseContext = LocalContext.current
@@ -64,6 +69,12 @@ fun LoginPage(modifier: Modifier = Modifier, auth: FirebaseAuth, onSuccessfullyL
                     "Fill out all Fields",
                     Toast.LENGTH_SHORT,
                 ).show()
+            } else if (password.length < 8 || email.contains("@")) {
+                Toast.makeText(
+                    baseContext,
+                    "Use a valid Password and Email",
+                    Toast.LENGTH_SHORT,
+                ).show()
             } else {
                 Toast.makeText(
                     baseContext,
@@ -78,8 +89,7 @@ fun LoginPage(modifier: Modifier = Modifier, auth: FirebaseAuth, onSuccessfullyL
                             Toast.LENGTH_SHORT,
                         ).show()
                         onSuccessfullyLogin()
-                    }
-                    else {
+                    } else {
                         Toast.makeText(
                             baseContext,
                             "Authentication failed. Check Internet Connection or Try Again",
@@ -90,6 +100,9 @@ fun LoginPage(modifier: Modifier = Modifier, auth: FirebaseAuth, onSuccessfullyL
             }
         }, Modifier.padding(12.dp)) { Text("Sign Up", Modifier.padding(6.dp)) }
         Spacer(modifier = Modifier.weight(1f))
-        TextButton(onClick = onChangePage, Modifier.padding(8.dp)) { Text(stringResource(R.string.register), textDecoration = TextDecoration.Underline) }
+        TextButton(
+            onClick = onChangePage,
+            Modifier.padding(8.dp)
+        ) { Text(stringResource(R.string.register), textDecoration = TextDecoration.Underline) }
     }
 }
