@@ -76,6 +76,12 @@ fun RegisterPage(
                     "Fill out all Fields",
                     Toast.LENGTH_SHORT,
                 ).show()
+            }  else if (password.length < 8 || email.contains("@")) {
+                Toast.makeText(
+                    baseContext,
+                    "Use a valid Password and Email",
+                    Toast.LENGTH_SHORT,
+                ).show()
             } else {
                 Toast.makeText(
                     baseContext,
