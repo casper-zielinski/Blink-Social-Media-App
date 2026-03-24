@@ -1,4 +1,4 @@
-package com.CU.blink.Account
+package com.CU.blink.User
 
 data class UserData(
     val name: String,
