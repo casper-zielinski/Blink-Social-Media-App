@@ -5,43 +5,35 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.CU.blink.ThemeViewModel
-import com.google.firebase.auth.FirebaseAuth
+import com.CU.blink.User.User
+import com.CU.blink.User.UserRepository
+import com.CU.blink.User.UserViewModel
 
 @Composable
-fun AccountPage(modifier: Modifier = Modifier, onSuccessfullyLogout: () -> Unit, viewModel: ThemeViewModel) {
+fun AccountPage(modifier: Modifier = Modifier,
+                onSuccessfullyLogout: () -> Unit,
+                viewModel: ThemeViewModel,
+                userViewModel: UserViewModel) {
 
-    val baseContext = LocalContext.current
-    val userData = FirebaseAuth.getInstance().currentUser
-    val name = userData?.displayName
-    val email = userData?.email
-    val user = User(
-        name = if (name.isNullOrEmpty()) "Your Name" else name,
-        email = if (email.isNullOrEmpty()) "" else email,
-        username = if (email.isNullOrEmpty()) "" else email.split("@")[0],
-        bio = "I love react",
-        maxTimeUse = 1,
-        userImageUrl = "",
-        headerImageUrl = "",
-        likesCount = 1100,
-        followersCount = 2,
-        followingCount = 33
-    );
+    val user = userViewModel.currentUser;
+    val isLoading = userViewModel.isLoading;
 
-    Surface(Modifier.fillMaxSize()) {
+    if (isLoading) {
+        LoadingScreen()
+    } else {
+
+        val activeUser = user ?: User()
+
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -49,48 +41,39 @@ fun AccountPage(modifier: Modifier = Modifier, onSuccessfullyLogout: () -> Unit,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             HeaderSection(
-                name = user.name,
-                username = user.username,
+                headerImageUrl = activeUser.headerImageUrl,
+                userImageUrl = activeUser.userImageUrl,
+                name = activeUser.name,
+                username =  activeUser.username,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(NavigationBarDefaults.containerColor)
-                    ,
-                onSuccessfullyLogout
+                    .padding(16.dp),
+                onSuccessfullyLogout = onSuccessfullyLogout
             )
-
-            BioSection(
-                user.bio,
+            BioSection(activeUser.bio,
                 Modifier
                     .fillMaxWidth()
                     .background(NavigationBarDefaults.containerColor)
                     .padding(16.dp),
-                bioStyle = MaterialTheme.typography.headlineMedium
-            )
+                bioStyle = MaterialTheme.typography.headlineMedium)
 
-            MaxTimeUseSection(
-                user.maxTimeUse,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(NavigationBarDefaults.containerColor)
-                    .padding(16.dp),
-                maxTimeUseStyle = MaterialTheme.typography.headlineMedium
-            )
-
-            StatsSection(
-                user.likesCount,
-                user.followersCount,
-                user.followingCount,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(NavigationBarDefaults.containerColor)
-                    .padding(16.dp),
-                statsStyle = MaterialTheme.typography.headlineMedium
-            )
-
-            DesignSection(modifier = Modifier
+            MaxTimeUseSection(activeUser.maxTimeUse, modifier = Modifier
                 .fillMaxWidth()
                 .background(NavigationBarDefaults.containerColor)
-                .padding(16.dp), statsStyle = MaterialTheme.typography.headlineMedium, viewModel)
+                .padding(16.dp),
+                maxTimeUseStyle =  MaterialTheme.typography.headlineMedium)
+
+            StatsSection(activeUser.likesCount, activeUser.followersCount, activeUser.followingCount,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(NavigationBarDefaults.containerColor)
+                    .padding(16.dp),
+                statsStyle =  MaterialTheme.typography.headlineMedium)
         }
     }
+
+
+
+
 }

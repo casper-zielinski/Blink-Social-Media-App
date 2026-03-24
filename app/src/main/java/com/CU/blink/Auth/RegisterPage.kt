@@ -24,6 +24,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.CU.blink.R
+import com.CU.blink.User.User
+import com.CU.blink.User.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.userProfileChangeRequest
 
@@ -83,19 +85,35 @@ fun RegisterPage(
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
 
-                        val user = auth.currentUser
+                        val firebaseUser = auth.currentUser
                         val profileUpdates = userProfileChangeRequest {
                             displayName = name
                         }
 
-                        user?.updateProfile(profileUpdates)?.addOnCompleteListener { updateTask ->
+                        firebaseUser?.updateProfile(profileUpdates)?.addOnCompleteListener { updateTask ->
                                 if (updateTask.isSuccessful) {
-                                    Toast.makeText(
-                                        baseContext,
-                                        "Successfully registered!",
-                                        Toast.LENGTH_SHORT,
-                                    ).show()
-                                    onSuccessfullyLogin()
+
+                                    val newUser = User(
+                                        id = firebaseUser.uid,
+                                        name = name,
+                                        email = email,
+                                        username = email.split("@")[0],
+                                        bio = "Neu bei Blink!"
+                                    )
+
+                                    UserRepository.saveUser(newUser) { isSaved ->
+                                        if (isSaved) {
+                                            Toast.makeText(baseContext, "Successfully registered!", Toast.LENGTH_SHORT).show()
+                                            onSuccessfullyLogin()
+                                        } else {
+                                            val errorMessage = task.exception?.message ?: "Unknown Error"
+
+                                            Toast.makeText(
+                                                baseContext,
+                                                "Error: $errorMessage",
+                                                Toast.LENGTH_LONG,
+                                            ).show()
+                                        }}
                                 } else {
                                     Toast.makeText(
                                         baseContext,

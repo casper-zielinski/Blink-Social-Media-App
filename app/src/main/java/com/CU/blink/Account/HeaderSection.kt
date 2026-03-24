@@ -33,6 +33,8 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HeaderSection(
+    headerImageUrl: String,
+    userImageUrl: String,
     name: String,
     username: String,
     modifier: Modifier = Modifier,
