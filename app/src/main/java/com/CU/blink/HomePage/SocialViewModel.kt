@@ -38,13 +38,11 @@ class SocialViewModel : ViewModel() {
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     _errorMessage.value = error.message
-                    print(_errorMessage.value)
                     return@addSnapshotListener
                 }
 
                 if (snapshot != null) {
                     _posts.value = snapshot.toObjects<Post>()
-                    print(_posts.value)
                 }
             }
     }

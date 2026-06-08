@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.CU.blink.ThemeViewModel
 import com.CU.blink.User.User
-import com.CU.blink.User.UserRepository
 import com.CU.blink.User.UserViewModel
 
 @Composable

@@ -7,33 +7,36 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.CU.blink.User.UserViewModel
 
 @Composable
-fun LoginOrRegister(modifier: Modifier = Modifier, onSuccessfulLogin: () -> Unit) {
-
-    val auth = Firebase.auth
+fun LoginOrRegister(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean,
+    onLogin: (String, String, (Boolean, String?) -> Unit) -> Unit,
+    onSignUp: (String, String, String, (Boolean, String?) -> Unit) -> Unit,
+    onSuccessfulLogin: () -> Unit
+) {
     var currentPage by remember { mutableStateOf(AuthPage.REGISTER) }
 
     Card(modifier) {
         when (currentPage) {
             AuthPage.LOGIN -> LoginPage(
-                Modifier,
-                auth,
+                modifier = Modifier,
+                onLogin = onLogin,
+                isLoading = isLoading,
                 onSuccessfullyLogin = onSuccessfulLogin,
                 onChangePage = {
-                    currentPage =
-                        AuthPage.REGISTER
+                    currentPage = AuthPage.REGISTER
                 })
 
             AuthPage.REGISTER -> RegisterPage(
-                Modifier,
-                auth,
+                modifier = Modifier,
+                onSignUp = onSignUp,
+                isLoading = isLoading,
                 onSuccessfullyLogin = onSuccessfulLogin,
                 onChangePage = {
-                    currentPage =
-                        AuthPage.LOGIN
+                    currentPage = AuthPage.LOGIN
                 })
         }
     }

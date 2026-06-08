@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,19 +26,20 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.CU.blink.R
-import com.CU.blink.User.User
-import com.CU.blink.User.UserRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.userProfileChangeRequest
 
 @Composable
 fun RegisterPage(
-    modifier: Modifier = Modifier, auth: FirebaseAuth, onSuccessfullyLogin: () -> Unit, onChangePage:  () -> Unit
+    modifier: Modifier = Modifier,
+    onSignUp: (String, String, String, (Boolean, String?) -> Unit) -> Unit,
+    isLoading: Boolean,
+    onSuccessfullyLogin: () -> Unit,
+    onChangePage: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val baseContext = LocalContext.current
+
     Column(
         modifier
             .padding(6.dp)
@@ -69,77 +72,42 @@ fun RegisterPage(
             placeholder = { Text(stringResource(R.string.passwordplaceholder)) },
             modifier = Modifier.padding(8.dp)
         )
-        FilledTonalButton(onClick = {
-            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(
-                    baseContext,
-                    "Fill out all Fields",
-                    Toast.LENGTH_SHORT,
-                ).show()
-            }  else if (password.length < 8 || email.contains("@")) {
-                Toast.makeText(
-                    baseContext,
-                    "Use a valid Password and Email",
-                    Toast.LENGTH_SHORT,
-                ).show()
-            } else {
-                Toast.makeText(
-                    baseContext,
-                    "Logging In",
-                    Toast.LENGTH_SHORT,
-                ).show()
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-
-                        val firebaseUser = auth.currentUser
-                        val profileUpdates = userProfileChangeRequest {
-                            displayName = name
-                        }
-
-                        firebaseUser?.updateProfile(profileUpdates)?.addOnCompleteListener { updateTask ->
-                                if (updateTask.isSuccessful) {
-
-                                    val newUser = User(
-                                        id = firebaseUser.uid,
-                                        name = name,
-                                        email = email,
-                                        username = email.split("@")[0],
-                                        bio = "Neu bei Blink!"
-                                    )
-
-                                    UserRepository.saveUser(newUser) { isSaved ->
-                                        if (isSaved) {
-                                            Toast.makeText(baseContext, "Successfully registered!", Toast.LENGTH_SHORT).show()
-                                            onSuccessfullyLogin()
-                                        } else {
-                                            val errorMessage = task.exception?.message ?: "Unknown Error"
-
-                                            Toast.makeText(
-                                                baseContext,
-                                                "Error: $errorMessage",
-                                                Toast.LENGTH_LONG,
-                                            ).show()
-                                        }}
-                                } else {
-                                    Toast.makeText(
-                                        baseContext,
-                                        "Authentication failed. Check Internet Connection or Try Again",
-                                        Toast.LENGTH_SHORT,
-                                    ).show()
-                                }
-                            }
+        FilledTonalButton(
+            onClick = {
+                onSignUp(name, email, password) { success, error ->
+                    if (success) {
+                        Toast.makeText(
+                            baseContext,
+                            "Successfully registered!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        onSuccessfullyLogin()
                     } else {
                         Toast.makeText(
                             baseContext,
-                            "Authentication failed. Check Internet Connection or Try Again",
+                            error ?: "Registration failed.",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
                 }
+            },
+            modifier = Modifier.padding(12.dp),
+            enabled = !isLoading
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            } else {
+                Text("Sign Up", Modifier.padding(6.dp))
             }
-
-        }, Modifier.padding(12.dp)) { Text("Sign Up", Modifier.padding(6.dp)) }
+        }
         Spacer(modifier = Modifier.weight(1f))
-        TextButton(onClick = onChangePage, Modifier.padding(8.dp)) { Text(stringResource(R.string.login), textDecoration = TextDecoration.Underline) }
+        TextButton(
+            onClick = onChangePage,
+            Modifier.padding(8.dp)
+        ) { Text(stringResource(R.string.login), textDecoration = TextDecoration.Underline) }
     }
 }

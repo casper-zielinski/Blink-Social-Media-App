@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,12 +26,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.CU.blink.R
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginPage(
     modifier: Modifier = Modifier,
-    auth: FirebaseAuth,
+    onLogin: (String, String, (Boolean, String?) -> Unit) -> Unit,
+    isLoading: Boolean,
     onSuccessfullyLogin: () -> Unit,
     onChangePage: () -> Unit
 ) {
@@ -62,27 +64,10 @@ fun LoginPage(
             placeholder = { Text(stringResource(R.string.passwordplaceholder)) },
             modifier = Modifier.padding(8.dp)
         )
-        FilledTonalButton(onClick = {
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(
-                    baseContext,
-                    "Fill out all Fields",
-                    Toast.LENGTH_SHORT,
-                ).show()
-            } else if (password.length < 8 || email.contains("@")) {
-                Toast.makeText(
-                    baseContext,
-                    "Use a valid Password and Email",
-                    Toast.LENGTH_SHORT,
-                ).show()
-            } else {
-                Toast.makeText(
-                    baseContext,
-                    "Logging In",
-                    Toast.LENGTH_SHORT,
-                ).show()
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
+        FilledTonalButton(
+            onClick = {
+                onLogin(email, password) { success, error ->
+                    if (success) {
                         Toast.makeText(
                             baseContext,
                             "Successfully logged In!",
@@ -92,13 +77,25 @@ fun LoginPage(
                     } else {
                         Toast.makeText(
                             baseContext,
-                            "Authentication failed. Check Internet Connection or Try Again",
+                            error ?: "Authentication failed.",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
                 }
+            },
+            modifier = Modifier.padding(12.dp),
+            enabled = !isLoading
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            } else {
+                Text("Login", Modifier.padding(6.dp))
             }
-        }, Modifier.padding(12.dp)) { Text("Sign Up", Modifier.padding(6.dp)) }
+        }
         Spacer(modifier = Modifier.weight(1f))
         TextButton(
             onClick = onChangePage,
