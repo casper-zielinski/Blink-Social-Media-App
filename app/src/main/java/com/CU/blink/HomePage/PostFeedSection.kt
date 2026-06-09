@@ -1,12 +1,20 @@
 package com.CU.blink.HomePage
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,13 +23,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -34,11 +47,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import coil.compose.AsyncImage
 import com.CU.blink.R
+import com.CU.blink.Upload.NetworkStatus
+import com.CU.blink.Upload.PendingUploadStore
 import com.CU.blink.composables.AccountIcon
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.collectAsState
@@ -51,17 +70,96 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun homePage(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewModel()) {
-    Column(modifier) {
-        PostSender(
-            Modifier.fillMaxWidth(), viewModel
+    val snackbarHostState = remember { SnackbarHostState() }
+    Box(modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize()) {
+            PostSender(
+                Modifier.fillMaxWidth(), viewModel, snackbarHostState
+            )
+            UploadStatusBanner(Modifier.fillMaxWidth())
+            PostFeed(Modifier.fillMaxWidth(), viewModel)
+        }
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
-        PostFeed(Modifier.fillMaxWidth(), viewModel)
+    }
+}
+
+/**
+ * Shows the current upload state while posts are queued: an offline hint while there is no
+ * connection, or an "uploading" hint once we are back online and the service is working.
+ */
+@Composable
+fun UploadStatusBanner(modifier: Modifier = Modifier) {
+    val pending by PendingUploadStore.pending.collectAsState()
+    val isOnline by NetworkStatus.isOnline.collectAsState()
+
+    if (pending.isNotEmpty()) {
+        val message = if (isOnline) {
+            "Post wird hochgeladen…"
+        } else {
+            "Kein Internet – wird gesendet sobald online"
+        }
+        Surface(color = MaterialTheme.colorScheme.secondaryContainer, modifier = modifier) {
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+            )
+        }
     }
 }
 
 @Composable
-fun PostSender(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
+fun PostSender(
+    modifier: Modifier = Modifier,
+    viewModel: SocialViewModel,
+    snackbarHostState: SnackbarHostState
+) {
     var sendText by remember { mutableStateOf("") }
+    var selectedImage by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    // The right permission to read images depends on the Android version.
+    val galleryPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        Manifest.permission.READ_MEDIA_IMAGES
+    } else {
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    }
+
+    // Opens the system image picker; the chosen image is shown as a preview.
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri -> if (uri != null) selectedImage = uri }
+
+    // Asks for the gallery permission; on grant we open the picker, on denial we explain why.
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            pickImageLauncher.launch("image/*")
+        } else {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    "Ohne Galerie-Zugriff kann kein Foto ausgewählt werden."
+                )
+            }
+        }
+    }
+
+    fun onPickPhotoClick() {
+        val alreadyGranted = ContextCompat.checkSelfPermission(
+            context, galleryPermission
+        ) == PackageManager.PERMISSION_GRANTED
+        if (alreadyGranted) {
+            pickImageLauncher.launch("image/*")
+        } else {
+            permissionLauncher.launch(galleryPermission)
+        }
+    }
 
     Surface(
         color = NavigationBarDefaults.containerColor, modifier = modifier
@@ -88,12 +186,37 @@ fun PostSender(modifier: Modifier = Modifier, viewModel: SocialViewModel) {
                     modifier = Modifier
                 )
             }
+
+            // Preview of the picked image; tap it to remove it again.
+            selectedImage?.let { uri ->
+                AsyncImage(
+                    model = uri,
+                    contentDescription = "Ausgewähltes Bild (zum Entfernen tippen)",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(top = 12.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { selectedImage = null }
+                )
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp), Arrangement.End
+                    .padding(top = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                ElevatedButton(onClick = { viewModel.addPost(sendText); sendText = "" }) {
+                IconButton(onClick = { onPickPhotoClick() }) {
+                    Icon(Icons.Filled.AddCircle, "Foto hinzufügen")
+                }
+                ElevatedButton(onClick = {
+                    viewModel.addPost(sendText, selectedImage?.toString(), context)
+                    sendText = ""
+                    selectedImage = null
+                }) {
                     Icon(Icons.AutoMirrored.Filled.Send, "Icon to Send")
                 }
             }
@@ -148,13 +271,27 @@ fun SinglePost(
             )
             NameAndUsername(post.name, post.username, Modifier.padding(start = 8.dp))
         }
-        Text(
-            post.content,
-            style = MaterialTheme.typography.displayLarge,
-            modifier = Modifier.padding(top = 6.dp),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-        )
+        if (post.content.isNotBlank()) {
+            Text(
+                post.content,
+                style = MaterialTheme.typography.displayLarge,
+                modifier = Modifier.padding(top = 6.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+        if (post.imageUrl.isNotBlank()) {
+            AsyncImage(
+                model = post.imageUrl,
+                contentDescription = "Bild von ${post.name}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp)
+                    .padding(top = 8.dp)
+                    .clip(RoundedCornerShape(12.dp))
+            )
+        }
         if (showComment) {
             viewModel.loadCommentsForPost(post.id)
             val comments by viewModel.comments.collectAsState()

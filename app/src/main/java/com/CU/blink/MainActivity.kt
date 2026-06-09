@@ -1,10 +1,15 @@
 package com.CU.blink
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -36,9 +41,16 @@ import com.google.firebase.auth.auth
 private lateinit var auth: FirebaseAuth
 
 class MainActivity : ComponentActivity() {
+
+    // Registered once; the result is ignored on purpose so we never nag the user again
+    // (Android only shows the system dialog the first time anyway).
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         auth = Firebase.auth
+        requestNotificationPermissionIfNeeded()
         val currentUser = auth.currentUser
         val themeViewModel by viewModels<ThemeViewModel>()
         val userViewModel by viewModels<UserViewModel>()
@@ -91,7 +103,15 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier
                                     .padding(46.dp)
                                     .fillMaxWidth()
-                                    .fillMaxHeight(0.6f), onSuccessfulLogin = { loggedIn = true })
+                                    .fillMaxHeight(0.6f),
+                                isLoading = userViewModel.isLoading,
+                                onLogin = { email, password, onResult ->
+                                    userViewModel.login(email, password, onResult)
+                                },
+                                onSignUp = { name, email, password, onResult ->
+                                    userViewModel.signUp(name, email, password, onResult)
+                                },
+                                onSuccessfulLogin = { loggedIn = true })
                         }
                     }
                 }
@@ -101,6 +121,22 @@ class MainActivity : ComponentActivity() {
                 if (loggedIn) {
                     userViewModel.loadUserData()
                 }
+            }
+        }
+    }
+
+    /**
+     * Asks for the notification permission once on Android 13+ so the upload service's
+     * progress notification can be shown. The system only displays the dialog on the first
+     * request, so a declined permission is not asked about again.
+     */
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val granted = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+            if (!granted) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }

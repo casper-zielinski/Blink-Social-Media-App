@@ -1,7 +1,14 @@
 package com.CU.blink.HomePage
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.CU.blink.Auth.User
+import com.CU.blink.Upload.BlinkUploadService
+import com.CU.blink.Upload.PendingPost
+import com.CU.blink.Upload.PendingUploadStore
+import java.io.File
+import java.io.FileOutputStream
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
@@ -47,14 +54,38 @@ class SocialViewModel : ViewModel() {
             }
     }
 
-    fun addPost(content: String) {
-        val currentUser: User = User(user?.displayName, user?.email?.split(".")[0], user?.email)
+    /**
+     * Queues the post and hands it to [BlinkUploadService] for upload. The post is not added
+     * to the feed directly: once the service has uploaded it, the Firestore snapshot listener
+     * in [loadPosts] picks it up. While offline it stays queued and is sent on reconnect.
+     */
+    fun addPost(content: String, imageUri: String? = null, context: Context) {
+        val name = user?.displayName
+        val username = user?.email?.split("@")?.firstOrNull()
+        val hasContent = content.isNotBlank() || imageUri != null
 
-        if (user != null && !currentUser.name.isNullOrEmpty() && !currentUser.username.isNullOrEmpty()) {
-            val newPost: Post =
-                Post(content = content, name = currentUser.name, username = currentUser.username)
-            postCollection.add(newPost)
-            _posts.value += newPost
+        if (user != null && hasContent && !name.isNullOrEmpty() && !username.isNullOrEmpty()) {
+            // Copy the picked image into our own storage so the upload still works even if the
+            // post is queued (offline) and the app is restarted before it can be sent.
+            val storedImage = imageUri?.let { copyImageToInternalStorage(context, it) }
+            PendingUploadStore.enqueue(
+                context,
+                PendingPost(content = content, name = name, username = username, imageUri = storedImage)
+            )
+            BlinkUploadService.start(context)
+        }
+    }
+
+    /** Copies the content at [imageUri] into the app's files dir and returns a file:// URI. */
+    private fun copyImageToInternalStorage(context: Context, imageUri: String): String? {
+        return try {
+            val file = File(context.filesDir, "upload_${System.currentTimeMillis()}.jpg")
+            context.contentResolver.openInputStream(Uri.parse(imageUri))?.use { input ->
+                FileOutputStream(file).use { output -> input.copyTo(output) }
+            } ?: return null
+            Uri.fromFile(file).toString()
+        } catch (e: Exception) {
+            null
         }
     }
 

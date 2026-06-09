@@ -40,3 +40,5 @@ captures/
 app/google-services.json
 
 /build
+
+/.vscode

@@ -9,5 +9,6 @@ data class Post(
     val content: String = "",
     val name: String = "",
     val username: String = "",
+    val imageUrl: String = "",
     @ServerTimestamp val postedAt: Date? = null
 )
