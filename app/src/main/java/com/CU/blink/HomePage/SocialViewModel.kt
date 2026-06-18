@@ -18,7 +18,7 @@ import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlin.collections.emptyMap
+import androidx.core.net.toUri
 
 class SocialViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
@@ -81,11 +81,11 @@ class SocialViewModel : ViewModel() {
     private fun copyImageToInternalStorage(context: Context, imageUri: String): String? {
         return try {
             val file = File(context.filesDir, "upload_${System.currentTimeMillis()}.jpg")
-            context.contentResolver.openInputStream(Uri.parse(imageUri))?.use { input ->
+            context.contentResolver.openInputStream(imageUri.toUri())?.use { input ->
                 FileOutputStream(file).use { output -> input.copyTo(output) }
             } ?: return null
             Uri.fromFile(file).toString()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -109,10 +109,10 @@ class SocialViewModel : ViewModel() {
     }
 
     fun addComment(postId: String, content: String) {
-        val currentUser: User = User(user?.displayName, user?.email?.split(".")[0], user?.email)
+        val currentUser= User(user?.displayName, user?.email?.split(".")[0], user?.email)
 
         if (user != null && !currentUser.name.isNullOrEmpty() && !currentUser.username.isNullOrEmpty()) {
-            val newComment: Comment = Comment(content = content, username = currentUser.username, name = currentUser.name)
+            val newComment = Comment(content = content, username = currentUser.username, name = currentUser.name)
             getCommentCollectionPath(postId).add(newComment)
 
             _comments.update { currentComment ->
