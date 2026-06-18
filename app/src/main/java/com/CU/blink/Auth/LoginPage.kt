@@ -7,12 +7,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.CU.blink.R
 import com.CU.blink.composables.AppLogo
+import com.CU.blink.composables.Input
+import com.CU.blink.composables.PasswordInput
 
 @Composable
 fun LoginPage(
@@ -38,6 +41,7 @@ fun LoginPage(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var showPassword by remember { mutableStateOf(false) }
     val baseContext = LocalContext.current
     Column(
         modifier
@@ -48,24 +52,14 @@ fun LoginPage(
     ) {
         AppLogo()
         Text(
-            stringResource(R.string.login),
+            text = stringResource(R.string.login),
             style = MaterialTheme.typography.titleLarge,
             fontSize = 28.sp,
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(12.dp),
         )
         Spacer(modifier = Modifier.weight(1f))
-        TextField(
-            value = email,
-            onValueChange = { email = it },
-            placeholder = { Text(stringResource(R.string.emailplaceholder)) },
-            modifier = Modifier.padding(8.dp)
-        )
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            placeholder = { Text(stringResource(R.string.passwordplaceholder)) },
-            modifier = Modifier.padding(8.dp)
-        )
+        Input(text = email, onTextChange = { email = it }, placeholder = stringResource(R.string.emailplaceholder), imageVector = Icons.Filled.Email, contentDescription = "Email Icon")
+        PasswordInput(password = password, onPasswordChange = { password = it }, showPassword = showPassword, onShowPassword = { showPassword = !showPassword })
         FilledTonalButton(
             onClick = {
                 onLogin(email, password) { success, error ->
