@@ -73,6 +73,7 @@ class SocialViewModel : ViewModel() {
                 PendingPost(content = content, name = name, username = username, imageUri = storedImage)
             )
             BlinkUploadService.start(context)
+            loadPosts() // to show the newest posts to the user
         }
     }
 
