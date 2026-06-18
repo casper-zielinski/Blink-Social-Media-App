@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.CU.blink.R
+import com.CU.blink.composables.AppLogo
 
 @Composable
 fun LoginPage(
@@ -45,6 +46,7 @@ fun LoginPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        AppLogo()
         Text(
             stringResource(R.string.login),
             style = MaterialTheme.typography.titleLarge,
