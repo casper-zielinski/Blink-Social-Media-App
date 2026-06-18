@@ -69,6 +69,10 @@ fun AccountPage(modifier: Modifier = Modifier,
                     .background(NavigationBarDefaults.containerColor)
                     .padding(16.dp),
                 statsStyle =  MaterialTheme.typography.headlineMedium)
+
+            DesignSection(modifier = Modifier.fillMaxWidth()
+                .background(NavigationBarDefaults.containerColor)
+                .padding(16.dp), statsStyle =  MaterialTheme.typography.headlineMedium, viewModel = viewModel)
         }
     }
 

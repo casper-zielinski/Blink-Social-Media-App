@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.CU.blink.Auth.LoginOrRegister
 import com.CU.blink.Account.AccountPage
 import com.CU.blink.HomePage.homePage
@@ -49,13 +50,15 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
+        super.onCreate(savedInstanceState)
+
         auth = Firebase.auth
         requestNotificationPermissionIfNeeded()
         val currentUser = auth.currentUser
         val themeViewModel by viewModels<ThemeViewModel>()
         val userViewModel by viewModels<UserViewModel>()
 
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             var page by rememberSaveable { mutableStateOf(PageLocation.HOME) }
@@ -101,7 +104,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             LoginOrRegister(
                                 modifier = Modifier
-                                    .padding(46.dp)
+                                    .padding(24.dp)
                                     .fillMaxWidth()
                                     .fillMaxHeight(0.6f),
                                 isLoading = userViewModel.isLoading,

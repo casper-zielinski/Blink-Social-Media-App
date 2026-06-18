@@ -2,12 +2,15 @@ package com.CU.blink.Auth
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,13 +51,14 @@ fun RegisterPage(
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     val baseContext = LocalContext.current
+    val scrollState = rememberScrollState()
 
     Column(
         modifier
             .padding(6.dp)
-            .fillMaxSize(),
+            .fillMaxSize().verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         AppLogo()
         Text(

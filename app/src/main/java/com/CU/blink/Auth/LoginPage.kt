@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.CircularProgressIndicator
@@ -43,10 +45,12 @@ fun LoginPage(
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     val baseContext = LocalContext.current
+    val scrollState = rememberScrollState()
+
     Column(
         modifier
             .padding(6.dp)
-            .fillMaxSize(),
+            .fillMaxSize().verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
