@@ -40,8 +40,6 @@ fun AccountPage(modifier: Modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             HeaderSection(
-                headerImageUrl = activeUser.headerImageUrl,
-                userImageUrl = activeUser.userImageUrl,
                 name = activeUser.name,
                 username =  activeUser.username,
                 modifier = Modifier
