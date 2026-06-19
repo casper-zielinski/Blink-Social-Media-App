@@ -46,4 +46,6 @@
     <string name="design_title">Design</string>
     <string name="dark_mode_label">Dark Mode</string>
     <string name="light_mode_label">Light Mode</string>
+    <string name="forgot_password_link">Forgot Password?</string>
+    <string name="reset_password_desc">Reset your password by providing your account email</string>
 </resources>

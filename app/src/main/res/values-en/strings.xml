@@ -46,4 +46,6 @@
     <string name="hide_password">Hide Password</string>
     <string name="default_bio">Neu bei Blink!</string>
     <string name="error_save_user">Failed to save user data</string>
+    <string name="forgot_password_link">Forgot Password?</string>
+    <string name="reset_password_desc">Reset your password by providing your account email</string>
 </resources>

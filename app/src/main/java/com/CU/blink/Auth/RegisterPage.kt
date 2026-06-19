@@ -39,7 +39,8 @@ fun RegisterPage(
     onSignUp: (String, String, String, (Boolean, Int?) -> Unit) -> Unit,
     isLoading: Boolean,
     onSuccessfullyLogin: () -> Unit,
-    onChangePage: () -> Unit
+    onChangePage: () -> Unit,
+    toForgotPassword: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -101,7 +102,10 @@ fun RegisterPage(
         Spacer(modifier = Modifier.weight(1f))
         TextButton(
             onClick = onChangePage,
-            Modifier.padding(8.dp)
         ) { Text(stringResource(R.string.login), textDecoration = TextDecoration.Underline) }
+        TextButton(
+            toForgotPassword,
+            Modifier.padding(2.dp)
+        ) { Text(stringResource(R.string.forgot_password_link), textDecoration = TextDecoration.Underline) }
     }
 }

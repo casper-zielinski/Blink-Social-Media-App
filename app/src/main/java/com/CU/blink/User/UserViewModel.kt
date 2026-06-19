@@ -132,10 +132,11 @@ class UserViewModel: ViewModel() {
             }
     }
 
-    fun resetPassword() {
-        val email = currentUser?.email
-        email?.let {
-            auth.sendPasswordResetEmail(email).addOnSuccessListener {
+    fun resetPassword(email: String? = null) {
+
+        val receivedEmail = email ?: currentUser?.email
+        receivedEmail?.let {
+            auth.sendPasswordResetEmail(receivedEmail).addOnSuccessListener {
                 return@addOnSuccessListener
             }.addOnFailureListener {
                 throw Exception(it.message)

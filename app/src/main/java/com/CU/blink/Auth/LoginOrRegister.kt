@@ -14,7 +14,8 @@ fun LoginOrRegister(
     isLoading: Boolean,
     onLogin: (String, String, (Boolean, Int?) -> Unit) -> Unit,
     onSignUp: (String, String, String, (Boolean, Int?) -> Unit) -> Unit,
-    onSuccessfulLogin: () -> Unit
+    onSuccessfulLogin: () -> Unit,
+    onForgotPassword: (String?) -> Unit
 ) {
     var currentPage by remember { mutableStateOf(AuthPage.REGISTER) }
 
@@ -27,7 +28,12 @@ fun LoginOrRegister(
                 onSuccessfullyLogin = onSuccessfulLogin,
                 onChangePage = {
                     currentPage = AuthPage.REGISTER
-                })
+                },
+                toForgotPassword = {
+                    currentPage = AuthPage.FORGOTPASSWORD
+                }
+                )
+
 
             AuthPage.REGISTER -> RegisterPage(
                 modifier = Modifier,
@@ -36,7 +42,22 @@ fun LoginOrRegister(
                 onSuccessfullyLogin = onSuccessfulLogin,
                 onChangePage = {
                     currentPage = AuthPage.LOGIN
-                })
+                },
+                toForgotPassword = {
+                    currentPage = AuthPage.FORGOTPASSWORD
+                }
+                )
+
+            AuthPage.FORGOTPASSWORD -> ForgotPasswordPage(
+                modifier = Modifier,
+                onForgotPassword = onForgotPassword,
+                toLogin = {
+                    currentPage = AuthPage.LOGIN
+                },
+                toRegister = {
+                    currentPage = AuthPage.REGISTER
+                }
+            )
         }
     }
 }

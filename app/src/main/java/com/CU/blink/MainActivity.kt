@@ -114,7 +114,9 @@ class MainActivity : ComponentActivity() {
                                 onSignUp = { name, email, password, onResult ->
                                     userViewModel.signUp(name, email, password, onResult)
                                 },
-                                onSuccessfulLogin = { loggedIn = true })
+                                onSuccessfulLogin = { loggedIn = true },
+                                onForgotPassword = { userViewModel.resetPassword(it) }
+                            )
                         }
                     }
                 }
