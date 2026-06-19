@@ -48,7 +48,14 @@ fun AccountPage(modifier: Modifier = Modifier,
                     .fillMaxWidth()
                     .background(NavigationBarDefaults.containerColor)
                     .padding(16.dp),
-                onSuccessfullyLogout = onSuccessfullyLogout
+            )
+            AccountSettings(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(NavigationBarDefaults.containerColor)
+                    .padding(16.dp),
+                onSuccessfullyLogout = onSuccessfullyLogout,
+                onChangingPassword = { userViewModel.resetPassword() }
             )
             BioSection(activeUser.bio,
                 Modifier

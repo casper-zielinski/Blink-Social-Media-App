@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.sp
 import com.CU.blink.composables.AccountIcon
 
 @Composable
-public fun TopAppBarBlink(modifier: Modifier = Modifier, onChange: (value: PageLocation) -> Unit) {
+fun TopAppBarBlink(modifier: Modifier = Modifier, onChange: (value: PageLocation) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth().padding(top = 12.dp)
     ) {
         Text(
             stringResource(R.string.app_name),
