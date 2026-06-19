@@ -36,7 +36,7 @@ import com.CU.blink.composables.PasswordInput
 @Composable
 fun LoginPage(
     modifier: Modifier = Modifier,
-    onLogin: (String, String, (Boolean, String?) -> Unit) -> Unit,
+    onLogin: (String, String, (Boolean, Int?) -> Unit) -> Unit,
     isLoading: Boolean,
     onSuccessfullyLogin: () -> Unit,
     onChangePage: () -> Unit
@@ -62,7 +62,7 @@ fun LoginPage(
             modifier = Modifier.padding(12.dp),
         )
         Spacer(modifier = Modifier.weight(1f))
-        Input(text = email, onTextChange = { email = it }, placeholder = stringResource(R.string.emailplaceholder), imageVector = Icons.Filled.Email, contentDescription = "Email Icon")
+        Input(text = email, onTextChange = { email = it }, placeholder = stringResource(R.string.emailplaceholder), imageVector = Icons.Filled.Email, contentDescription = stringResource(R.string.email_icon_desc))
         PasswordInput(password = password, onPasswordChange = { password = it }, showPassword = showPassword, onShowPassword = { showPassword = !showPassword })
         FilledTonalButton(
             onClick = {
@@ -70,14 +70,14 @@ fun LoginPage(
                     if (success) {
                         Toast.makeText(
                             baseContext,
-                            "Successfully logged In!",
+                            baseContext.getString(R.string.login_success),
                             Toast.LENGTH_SHORT,
                         ).show()
                         onSuccessfullyLogin()
                     } else {
                         Toast.makeText(
                             baseContext,
-                            error ?: "Authentication failed.",
+                            if (error != null) baseContext.getString(error) else baseContext.getString(R.string.error_auth_failed),
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -93,7 +93,7 @@ fun LoginPage(
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             } else {
-                Text("Login", Modifier.padding(6.dp))
+                Text(stringResource(R.string.login_button), Modifier.padding(6.dp))
             }
         }
         Spacer(modifier = Modifier.weight(1f))

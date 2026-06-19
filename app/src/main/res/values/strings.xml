@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Blink</string>
-    <string name="placeholderwhatshappening">What is happening...</string>
+    <string name="app_name" translatable="false">Blink</string>
+    <string name="placeholderwhatshappening">What is happening…</string>
     <string name="commentplacholder">Comment</string>
     <string name="nameplaceholder">Your Name</string>
     <string name="emailplaceholder">Your Email</string>
@@ -8,4 +8,42 @@
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="account">Account</string>
+    <string name="account_settings_title">Account Settings</string>
+    <string name="logout_button">Log Out</string>
+    <string name="reset_password_button">Reset Password</string>
+    <string name="password_reset_sent">Password reset email sent!</string>
+    <string name="error_fill_fields">Fill out all Fields</string>
+    <string name="error_invalid_credentials">Use a valid Password and Email</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="login_success">Successfully logged In!</string>
+    <string name="register_success">Successfully registered!</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="login_button">Login</string>
+    <string name="name_icon_desc">Name Icon</string>
+    <string name="email_icon_desc">Email Icon</string>
+    <string name="password_icon_desc">Password Icon</string>
+    <string name="logout_icon_desc">Log Out Icon</string>
+    <string name="reset_password_icon_desc">Reset Password Icon</string>
+    <string name="show_password">Show Password</string>
+    <string name="hide_password">Hide Password</string>
+    <string name="default_bio">Neu bei Blink!</string>
+    <string name="error_save_user">Failed to save user data</string>
+    <string name="error_db_rollback">Database error: %1$s. Account rolled back.</string>
+    <string name="error_profile_rollback">Profile update failed. Account rolled back.</string>
+    <string name="error_auth_failed">Authentication failed.</string>
+    <string name="error_register_failed">Registration failed.</string>
+    <string name="header_image_desc">Header Background</string>
+    <string name="user_image_desc">User Profile Image</string>
+    <string name="account_icon_desc">Account Icon</string>
+    <string name="bio_title">Bio</string>
+    <string name="max_time_title">Max usage time</string>
+    <string name="duration_label">Duration</string>
+    <string name="unit_label">Unit</string>
+    <string name="stats_title">Stats</string>
+    <string name="likes_label">Likes:</string>
+    <string name="followers_label">Followers</string>
+    <string name="following_label">Following</string>
+    <string name="design_title">Design</string>
+    <string name="dark_mode_label">Dark Mode</string>
+    <string name="light_mode_label">Light Mode</string>
 </resources>

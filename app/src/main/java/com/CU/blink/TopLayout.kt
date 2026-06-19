@@ -33,7 +33,7 @@ fun TopAppBarBlink(modifier: Modifier = Modifier, onChange: (value: PageLocation
             fontSize = 24.sp
         )
         IconButton(onClick = { onChange(PageLocation.ACCOUNT) }) {
-            AccountIcon( Modifier.size(24.dp), "Account Icon")
+            AccountIcon( Modifier.size(24.dp), stringResource(R.string.account_icon_desc))
         }
     }
 }

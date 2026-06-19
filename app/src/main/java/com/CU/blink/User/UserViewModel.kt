@@ -3,6 +3,7 @@ package com.CU.blink.User
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import com.CU.blink.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,7 +20,6 @@ class UserViewModel: ViewModel() {
     var isLoading by mutableStateOf(false)
     private set
 
-    // 2. Die "Fetch"-Action (Wie ein Async Thunk)
     fun loadUserData() {
         val uid = auth.currentUser?.uid
 
@@ -40,33 +40,19 @@ class UserViewModel: ViewModel() {
         }
     }
 
-    fun updateUser(updatedUser: User, onComplete: (Boolean) -> Unit) {
-        val uid = auth.currentUser?.uid ?: return
-        db.collection("users").document(uid)
-            .set(updatedUser)
-            .addOnSuccessListener {
-                currentUser = updatedUser
-                onComplete(true)
-            }
-            .addOnFailureListener {
-                onComplete(false)
-            }
-    }
-
-    // Necessary for the "slice" so we can actually set it to null if logged out
     fun logOut(onComplete: () -> Unit) {
         auth.signOut()
         currentUser = null
         onComplete()
     }
 
-    fun login(email: String, password: String, onComplete: (Boolean, String?) -> Unit) {
+    fun login(email: String, password: String, onComplete: (Boolean, Int?) -> Unit) {
         if (email.isEmpty() || password.isEmpty()) {
-            onComplete(false, "Fill out all Fields")
+            onComplete(false, R.string.error_fill_fields)
             return
         }
         if (password.length < 8 || !email.contains("@")) {
-            onComplete(false, "Use a valid Password and Email")
+            onComplete(false, R.string.error_invalid_credentials)
             return
         }
 
@@ -79,18 +65,23 @@ class UserViewModel: ViewModel() {
                     onComplete(true, null)
                 } else {
                     isLoading = false
-                    onComplete(false, task.exception?.message ?: "Authentication failed")
+                    // We can't easily map Firebase exceptions to resources without a big when block,
+                    // but we can provide a generic error or just pass the message.
+                    // Let's stick to resource IDs for validation and a generic one for auth failure
+                    // unless we want to keep String for dynamic Firebase messages.
+                    // Given the goal of resource files, let's use a generic error resource for Auth exceptions.
+                    onComplete(false, R.string.error_auth_failed)
                 }
             }
     }
 
-    fun signUp(name: String, email: String, password: String, onComplete: (Boolean, String?) -> Unit) {
+    fun signUp(name: String, email: String, password: String, onComplete: (Boolean, Int?) -> Unit) {
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            onComplete(false, "Fill out all Fields")
+            onComplete(false, R.string.error_fill_fields)
             return
         }
         if (password.length < 8 || !email.contains("@")) {
-            onComplete(false, "Use a valid Password and Email")
+            onComplete(false, R.string.error_invalid_credentials)
             return
         }
 
@@ -114,7 +105,6 @@ class UserViewModel: ViewModel() {
                                     bio = "Neu bei Blink!"
                                 )
 
-                                // Datenbank-Eintrag erstellen
                                 db.collection("users").document(firebaseUser.uid)
                                     .set(newUser)
                                     .addOnSuccessListener {
@@ -122,24 +112,22 @@ class UserViewModel: ViewModel() {
                                         currentUser = newUser
                                         onComplete(true, null)
                                     }
-                                    .addOnFailureListener { e ->
-                                        // FEHLER-FALL: Wenn DB fehlschlägt, Auth-User wieder löschen!
+                                    .addOnFailureListener {
                                         firebaseUser.delete().addOnCompleteListener {
                                             isLoading = false
-                                            onComplete(false, "Database error: ${e.message}. Account rolled back.")
+                                            onComplete(false, R.string.error_save_user)
                                         }
                                     }
                             } else {
-                                // Wenn Profil-Update fehlschlägt, Auth-User auch löschen
                                 firebaseUser.delete().addOnCompleteListener {
                                     isLoading = false
-                                    onComplete(false, "Profile update failed. Account rolled back.")
+                                    onComplete(false, R.string.error_profile_rollback)
                                 }
                             }
                         }
                 } else {
                     isLoading = false
-                    onComplete(false, task.exception?.message ?: "Registration failed")
+                    onComplete(false, R.string.error_register_failed)
                 }
             }
     }

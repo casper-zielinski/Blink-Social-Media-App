@@ -3,7 +3,6 @@ package com.CU.blink.composables
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -26,9 +25,9 @@ fun Input(modifier: Modifier = Modifier, text: String, onTextChange: (String) ->
         value = text,
         onValueChange = onTextChange,
         placeholder = { Text(placeholder) },
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp),
         leadingIcon = { Icon(imageVector, contentDescription) },
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
     )
 }
 
@@ -43,9 +42,9 @@ fun PasswordInput(modifier: Modifier = Modifier, password: String, onPasswordCha
         leadingIcon = {
             IconButton( onClick = onShowPassword) {
                 if (showPassword) {
-                    Icon(Icons.Filled.Visibility, "Showing Password")
+                    Icon(Icons.Filled.Visibility, stringResource(R.string.show_password))
                 } else {
-                    Icon(Icons.Filled.VisibilityOff, "Hide Password")
+                    Icon(Icons.Filled.VisibilityOff, stringResource(R.string.hide_password))
                 }
             }
         }

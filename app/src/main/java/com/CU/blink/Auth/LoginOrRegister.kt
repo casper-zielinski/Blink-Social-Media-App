@@ -7,14 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.CU.blink.User.UserViewModel
 
 @Composable
 fun LoginOrRegister(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
-    onLogin: (String, String, (Boolean, String?) -> Unit) -> Unit,
-    onSignUp: (String, String, String, (Boolean, String?) -> Unit) -> Unit,
+    onLogin: (String, String, (Boolean, Int?) -> Unit) -> Unit,
+    onSignUp: (String, String, String, (Boolean, Int?) -> Unit) -> Unit,
     onSuccessfulLogin: () -> Unit
 ) {
     var currentPage by remember { mutableStateOf(AuthPage.REGISTER) }

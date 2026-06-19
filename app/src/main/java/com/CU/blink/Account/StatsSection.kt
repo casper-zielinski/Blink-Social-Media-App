@@ -9,16 +9,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.CU.blink.R
 
 @Composable
 fun StatsSection(likesCount: Int, followersCount: Int, followingCount: Int,
                  modifier: Modifier = Modifier,   statsStyle: TextStyle = MaterialTheme.typography.headlineLarge
 ) {
     Column(modifier) {
-        Text(text = "Stats", style = statsStyle)
+        Text(text = stringResource(R.string.stats_title), style = statsStyle)
 
         Column(
             modifier = Modifier
@@ -26,25 +28,25 @@ fun StatsSection(likesCount: Int, followersCount: Int, followingCount: Int,
                 .fillMaxWidth()
         ) {
             Row() {
-                Text(text = "Likes:",
+                Text(text = stringResource(R.string.likes_label),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.width(100.dp))
-                Text(text = "1100", modifier = Modifier.padding(start = 44.dp))
+                Text(text = likesCount.toString(), modifier = Modifier.padding(start = 44.dp))
             }
 
             Row() {
-                Text(text = "Followers",
+                Text(text = stringResource(R.string.followers_label),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.width(100.dp)
                     )
-                Text(text = "2", modifier = Modifier.padding(start = 44.dp))
+                Text(text = followersCount.toString(), modifier = Modifier.padding(start = 44.dp))
             }
 
             Row() {
-                Text(text = "Following",
+                Text(text = stringResource(R.string.following_label),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.width(100.dp))
-                Text(text = "45", modifier = Modifier.padding(start = 44.dp))
+                Text(text = followingCount.toString(), modifier = Modifier.padding(start = 44.dp))
             }
         }
     }

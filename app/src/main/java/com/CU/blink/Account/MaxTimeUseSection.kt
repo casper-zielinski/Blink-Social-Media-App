@@ -10,8 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.CU.blink.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,13 +25,12 @@ fun MaxTimeUseSection(
     var amount by remember { mutableStateOf(msToDisplay(maxTimeUse).first.toString()) }
     var timeUnit by remember { mutableStateOf(msToDisplay(maxTimeUse).second) }
     var maxTimeMs by remember { mutableLongStateOf(maxTimeUse) }
-
     var expanded by remember { mutableStateOf(false) }
     val units = listOf("s", "min", "h")
 
     Column(modifier) {
 
-        Text(text = "Max Zeit", style = maxTimeUseStyle)
+        Text(text = stringResource(R.string.max_time_title), style = maxTimeUseStyle)
 
         Row(
             modifier = Modifier
@@ -47,7 +48,7 @@ fun MaxTimeUseSection(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                label = { Text("Dauer") }
+                label = { Text(stringResource(R.string.duration_label)) }
             )
 
 
@@ -63,7 +64,7 @@ fun MaxTimeUseSection(
                         value = timeUnit,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Art") },
+                        label = { Text(stringResource(R.string.unit_label)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         colors = ExposedDropdownMenuDefaults.textFieldColors(),
                         modifier = Modifier.menuAnchor()
