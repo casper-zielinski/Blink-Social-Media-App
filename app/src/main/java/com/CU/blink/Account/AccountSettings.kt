@@ -8,12 +8,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +31,39 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun AccountSettings(modifier: Modifier = Modifier, onSuccessfullyLogout: () -> Unit, onChangingPassword: () -> Unit) {
     val baseContext = LocalContext.current
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(stringResource(R.string.logout_confirm_title)) },
+            text = { Text(stringResource(R.string.logout_confirm_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        try {
+                            FirebaseAuth.getInstance().signOut()
+                            onSuccessfullyLogout()
+                        } catch (_: Exception) {
+                            Toast.makeText(
+                                baseContext,
+                                baseContext.getString(R.string.error_generic),
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.logout_button))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(stringResource(R.string.cancel_button))
+                }
+            }
+        )
+    }
 
     Column(modifier = modifier) {
         Text(stringResource(R.string.account_settings_title), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(bottom = 24.dp))
@@ -35,18 +73,8 @@ fun AccountSettings(modifier: Modifier = Modifier, onSuccessfullyLogout: () -> U
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Button(
-                onClick = {
-                    try {
-                        FirebaseAuth.getInstance().signOut()
-                        onSuccessfullyLogout()
-                    } catch (_ :Exception) {
-                        Toast.makeText(
-                            baseContext,
-                            baseContext.getString(R.string.error_generic),
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-                }, modifier = Modifier.padding(10.dp)
+                onClick = { showLogoutDialog = true },
+                modifier = Modifier.padding(10.dp)
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,

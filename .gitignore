@@ -42,3 +42,6 @@ app/google-services.json
 /build
 
 /.vscode
+
+# --- Persönliche Notiz zum Logout-Feature (nicht ins Repo) ---
+FEATURE_LOGOUT_DIALOG.md

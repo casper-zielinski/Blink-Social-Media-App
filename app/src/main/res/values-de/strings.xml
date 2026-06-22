@@ -10,6 +10,9 @@
     <string name="account">Konto</string>
     <string name="account_settings_title">Kontoeinstellungen</string>
     <string name="logout_button">Abmelden</string>
+    <string name="logout_confirm_title">Abmelden</string>
+    <string name="logout_confirm_message">Möchtest du dich wirklich abmelden?</string>
+    <string name="cancel_button">Abbrechen</string>
     <string name="reset_password_button">Passwort zurücksetzen</string>
     <string name="password_reset_sent">E-Mail zum Zurücksetzen des Passworts wurde gesendet!</string>
     <string name="error_fill_fields">Bitte fülle alle Felder aus</string>

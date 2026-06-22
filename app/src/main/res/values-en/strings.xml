@@ -10,6 +10,9 @@
     <string name="account">Account</string>
     <string name="account_settings_title">Account Settings</string>
     <string name="logout_button">Log Out</string>
+    <string name="logout_confirm_title">Log Out</string>
+    <string name="logout_confirm_message">Do you really want to log out?</string>
+    <string name="cancel_button">Cancel</string>
     <string name="reset_password_button">Reset Password</string>
     <string name="password_reset_sent">Password reset email sent!</string>
     <string name="error_db_rollback">Database error: %1$s. Account rolled back.</string>
