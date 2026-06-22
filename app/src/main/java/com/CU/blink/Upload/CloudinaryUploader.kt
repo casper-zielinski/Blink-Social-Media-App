@@ -1,3 +1,21 @@
+/*
+ * AI ASSISTANCE NOTICE — coded with AI
+ *
+ * Motivation: we used an AI tool for this background-upload feature mainly because we
+ *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+ *   and to learn from a working example.
+ *
+ * Why AI was needed:
+ *   To host post images we upload them to Cloudinary without pulling in their SDK. A signed
+ *   upload means hand-building a multipart/form-data HTTP request and a SHA-1 signature over
+ *   the request parameters — low-level networking we were not familiar with.
+ * Written by us (the team):
+ *   The decision to use Cloudinary for image hosting, and to keep the credentials in
+ *   BuildConfig (from the gitignored local.properties) so the secret stays out of git.
+ * Supported by the AI tool:
+ *   The HttpURLConnection multipart request, the SHA-1 signing, and parsing the
+ *   secure_url out of the JSON response.
+ */
 package com.CU.blink.Upload
 
 import android.content.Context

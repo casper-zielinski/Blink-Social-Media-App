@@ -86,6 +86,22 @@ fun homePage(modifier: Modifier = Modifier, viewModel: SocialViewModel = viewMod
     }
 }
 
+/*
+ * AI ASSISTANCE NOTICE — coded with AI
+ *
+ * Motivation: we used an AI tool for this background-upload feature mainly because we
+ *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+ *   and to learn from a working example.
+ *
+ * Why AI was needed:
+ *   Collecting the upload queue and the online state as Compose state (collectAsState) to
+ *   drive this banner was new to us.
+ * Written by us (the team):
+ *   The idea of a banner that tells the user a post is queued / waiting for internet, and
+ *   its German wording.
+ * Supported by the AI tool:
+ *   Wiring the StateFlows into the composable and the conditional rendering.
+ */
 /**
  * Shows the current upload state while posts are queued: an offline hint while there is no
  * connection, or an "uploading" hint once we are back online and the service is working.
@@ -123,6 +139,25 @@ fun PostSender(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
+    /*
+     * AI ASSISTANCE NOTICE — coded with AI (the image-picking + permission block below)
+     *
+     * Motivation: we used an AI tool for this background-upload feature mainly because we
+     *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+     *   and to learn from a working example.
+     *
+     * Why AI was needed:
+     *   Picking an image needs the runtime gallery permission, which differs by Android
+     *   version (READ_MEDIA_IMAGES vs READ_EXTERNAL_STORAGE), plus the Activity Result
+     *   launchers for both the permission request and the system picker. This Compose +
+     *   permission flow was unfamiliar to us.
+     * Written by us (the team):
+     *   The feature — let the user attach a photo to a post, with a preview and a friendly
+     *   message if access is denied.
+     * Supported by the AI tool:
+     *   The version-dependent permission choice and the rememberLauncherForActivityResult
+     *   wiring for the picker and the permission request.
+     */
     // The right permission to read images depends on the Android version.
     val galleryPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_IMAGES
@@ -280,6 +315,9 @@ fun SinglePost(
                 fontWeight = FontWeight.SemiBold
             )
         }
+        // AI ASSISTANCE NOTICE — coded with AI: loading the post's hosted image from its URL
+        // uses the Coil AsyncImage composable, which the AI tool suggested. The idea to show
+        // the attached image inside a post is ours.
         if (post.imageUrl.isNotBlank()) {
             AsyncImage(
                 model = post.imageUrl,

@@ -130,6 +130,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /*
+     * AI ASSISTANCE NOTICE — coded with AI (the notification-permission handling: the
+     * launcher field above and this method).
+     *
+     * Motivation: we used an AI tool for this background-upload feature mainly because we
+     *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+     *   and to learn from a working example.
+     *
+     * Why AI was needed:
+     *   Since Android 13 the app must request the POST_NOTIFICATIONS runtime permission for
+     *   the upload service's progress notification to appear. The Activity Result launcher
+     *   and the version check were unfamiliar to us.
+     * Written by us (the team):
+     *   The decision to ask for it once on start so the upload notification can be shown.
+     * Supported by the AI tool:
+     *   The permission-request launcher and the SDK-version-guarded request below.
+     */
     /**
      * Asks for the notification permission once on Android 13+ so the upload service's
      * progress notification can be shown. The system only displays the dialog on the first

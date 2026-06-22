@@ -1,3 +1,18 @@
+/*
+ * AI ASSISTANCE NOTICE — coded with AI
+ *
+ * Motivation: we used an AI tool for this background-upload feature mainly because we
+ *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+ *   and to learn from a working example.
+ *
+ * Why AI was needed:
+ *   Minor — this data class is part of the AI-assisted upload feature and is documented
+ *   here for completeness.
+ * Written by us (the team):
+ *   The fields a queued post needs (text, author, optional image).
+ * Supported by the AI tool:
+ *   The id/UUID default used to identify a post in the queue.
+ */
 package com.CU.blink.Upload
 
 import java.util.UUID

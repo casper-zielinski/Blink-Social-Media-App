@@ -1,3 +1,23 @@
+/*
+ * AI ASSISTANCE NOTICE — coded with AI
+ *
+ * Motivation: we used an AI tool for this background-upload feature mainly because we
+ *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+ *   and to learn from a working example.
+ *
+ * Why AI was needed:
+ *   On Android 10+ (API 29+) a background upload has to run as a *foreground service*,
+ *   which needs a foregroundServiceType, ServiceCompat.startForeground(), work moved off
+ *   the main thread, and the correct stopForeground()/stopSelf() lifecycle. We understood
+ *   the concept of a Service, but not this version-specific boilerplate.
+ * Written by us (the team):
+ *   The feature idea and flow — keep uploading a post in the background after the user
+ *   leaves the app, process the queue one post at a time (image first, then Firestore),
+ *   and leave a post queued so it can be retried later.
+ * Supported by the AI tool:
+ *   The foreground-service boilerplate, the SDK-version guard, running the upload on a
+ *   worker thread, and the service lifecycle / notification details.
+ */
 package com.CU.blink.Upload
 
 import android.app.Notification

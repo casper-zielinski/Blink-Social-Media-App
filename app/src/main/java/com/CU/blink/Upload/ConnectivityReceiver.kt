@@ -1,3 +1,19 @@
+/*
+ * AI ASSISTANCE NOTICE — coded with AI
+ *
+ * Motivation: we used an AI tool for this background-upload feature mainly because we
+ *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+ *   and to learn from a working example.
+ *
+ * Why AI was needed:
+ *   Knowing that a CONNECTIVITY_CHANGE BroadcastReceiver has to be registered at runtime
+ *   (manifest-declared ones are ignored on Android 7+) is a non-obvious platform detail.
+ * Written by us (the team):
+ *   The retry idea — when the device is back online and posts are still queued, restart
+ *   the upload service so the queued posts are sent automatically.
+ * Supported by the AI tool:
+ *   The BroadcastReceiver wiring and the runtime-registration note.
+ */
 package com.CU.blink.Upload
 
 import android.content.BroadcastReceiver

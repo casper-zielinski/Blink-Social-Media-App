@@ -1,3 +1,19 @@
+/*
+ * AI ASSISTANCE NOTICE — coded with AI
+ *
+ * Motivation: we used an AI tool for this background-upload feature mainly because we
+ *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+ *   and to learn from a working example.
+ *
+ * Why AI was needed:
+ *   Persisting a queue of posts so it survives the app being closed or going offline means
+ *   serializing the list to JSON, storing it in SharedPreferences, and exposing it as a
+ *   StateFlow — the JSON/StateFlow plumbing was unfamiliar to us.
+ * Written by us (the team):
+ *   The queue concept and its operations (enqueue, peek the next one, remove when done).
+ * Supported by the AI tool:
+ *   The JSON read/write into SharedPreferences and the StateFlow the UI observes.
+ */
 package com.CU.blink.Upload
 
 import android.content.Context

@@ -54,6 +54,23 @@ class SocialViewModel : ViewModel() {
             }
     }
 
+    /*
+     * AI ASSISTANCE NOTICE — coded with AI (the two methods below, addPost + copyImageToInternalStorage)
+     *
+     * Motivation: we used an AI tool for this background-upload feature mainly because we
+     *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+     *   and to learn from a working example.
+     *
+     * Why AI was needed:
+     *   Reading a picked image from its content URI and copying it into the app's own
+     *   storage (so a queued/offline post can still be uploaded after a restart) uses the
+     *   contentResolver / streams API we were not familiar with.
+     * Written by us (the team):
+     *   The flow — instead of writing to Firestore directly, queue the post and let the
+     *   background upload service send it, so the feed updates from the Firestore listener.
+     * Supported by the AI tool:
+     *   Copying the image into internal storage and the stream handling.
+     */
     /**
      * Queues the post and hands it to [BlinkUploadService] for upload. The post is not added
      * to the feed directly: once the service has uploaded it, the Firestore snapshot listener

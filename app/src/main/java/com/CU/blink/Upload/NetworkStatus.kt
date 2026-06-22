@@ -1,3 +1,19 @@
+/*
+ * AI ASSISTANCE NOTICE — coded with AI
+ *
+ * Motivation: we used an AI tool for this background-upload feature mainly because we
+ *   wanted to see what an Android Service and BroadcastReceiver look like in a real app,
+ *   and to learn from a working example.
+ *
+ * Why AI was needed:
+ *   Checking for a real internet connection uses the ConnectivityManager /
+ *   NetworkCapabilities API, whose exact calls we did not know.
+ * Written by us (the team):
+ *   The idea to expose a single "are we online?" state that both the receiver and the UI
+ *   can read (to show the offline hint).
+ * Supported by the AI tool:
+ *   The capability-check implementation and exposing it as a StateFlow.
+ */
 package com.CU.blink.Upload
 
 import android.content.Context
