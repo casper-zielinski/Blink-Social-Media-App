@@ -10,9 +10,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.CU.blink.ThemeViewModel
 import com.CU.blink.User.User
@@ -78,6 +80,8 @@ fun AccountPage(modifier: Modifier = Modifier,
             DesignSection(modifier = Modifier.fillMaxWidth()
                 .background(NavigationBarDefaults.containerColor)
                 .padding(16.dp), statsStyle =  MaterialTheme.typography.headlineMedium, viewModel = viewModel)
+
+            //Text(modifier = Modifier.padding(top = 16.dp), text = activeUser.email, color = Color.Gray);
         }
     }
 

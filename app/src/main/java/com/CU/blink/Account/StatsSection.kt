@@ -22,7 +22,7 @@ fun StatsSection(likesCount: Int, followersCount: Int, followingCount: Int,
     Column(modifier) {
         Text(text = stringResource(R.string.stats_title), style = statsStyle)
 
-        Column(
+        Row(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
